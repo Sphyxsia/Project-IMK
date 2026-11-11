@@ -149,7 +149,31 @@ label m1_gagal:
 
 label bab2:
 
-    "bab 2 On Progress"
+    "Beberapa minggu kemudian, Kiki menerima telepon dari rumah. Masalah air sumur belum selesai."
+
+    i "Kiki, kondisi Dinda masih perlu diperhatikan. Ia sempat mengalami gangguan perut, dan kami sedang mengikuti saran dokter."
+    
+    k "Bagaimana dengan air sumurnya, Bu?"
+
+    i "Airnya masih terlihat keruh. Kami belum tahu pasti apa penyebabnya. Untuk sementara, kami menggunakan sumber air yang lebih aman."
+
+    k "Aku pulang akhir pekan ini, ya, Bu. Aku ingin melihat apa yang bisa kubantu."
+
+    " Kiki tiba di kampung dan melihat pekerjaan pemasangan jaringan air yang sedang dilakukan warga."
+
+    k "Pak Darto, saya boleh membantu pekerjaan ini? Saya ingin keluarga saya dan warga punya akses air yang lebih aman. Upahnya juga bisa membantu biaya keluarga."
+
+    d "Tentu, Nak. Tapi pemasangan pipa air minum tidak boleh asal sambung."
+
+    k "Apa yang harus saya perhatikan, Pak?"
+
+    d "Pertama, ikuti jalur dari sumber atau tangki menuju rumah. Kedua, pastikan pipa air minum terpisah dari saluran limbah dan tidak mudah tercemar. Ketiga, sambungannya harus rapat dan sistemnya perlu diperiksa."
+
+    k "Jadi, air yang sudah mengalir belum tentu langsung aman untuk diminum?"
+
+    d "Betul. Kita juga harus memastikan sumbernya layak dan kualitas airnya memenuhi persyaratan."
+
+    
     jump bab3
 
 label bab3:
