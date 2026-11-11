@@ -33,7 +33,7 @@ define gui.idle_color = '#707070'
 
 ## Warna kecil yang di gunakan untuk text kecil, yang membutuhkan lebih terang/
 ## lebih gelap untuk mencapai efek yang sama
-define gui.idle_small_color = '#606060'
+define gui.idle_small_color = '#fffefe'
 
 ## Warna yang di gunakan untuk tombol dan bar yang di pilih.
 define gui.hover_color = '#0099ff'
@@ -52,7 +52,7 @@ define gui.muted_color = '#66c1ff'
 define gui.hover_muted_color = '#99d6ff'
 
 ## Warna yang di gunakan untuk dialog dan text pilihan menu.
-define gui.text_color = '#404040'
+define gui.text_color = '#fdf3f3'
 define gui.interface_text_color = '#404040'
 
 
@@ -89,8 +89,8 @@ define gui.title_text_size = 75
 ## Menu utama dan Menu permainan. ##############################################
 
 ## Gambar yang di gunakan untuk Menu utama dan Menu permainan.
-define gui.main_menu_background = "gui/main_menu.png"
-define gui.game_menu_background = "gui/game_menu.png"
+define gui.main_menu_background = "images/gui/main_menu.png"
+define gui.game_menu_background = "images/gui/game_menu.png"
 
 
 ## Dialog ######################################################################

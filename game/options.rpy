@@ -153,7 +153,7 @@ define config.save_directory = "KikiSiAnakKosHemat-1793771800"
 ##
 ## Ikon yang di tampilkan di taskbar atau dock.
 
-define config.window_icon = "gui/window_icon.png"
+define config.window_icon = "images/gui/window_icon.png"
 
 
 ## Pengaturan Build ############################################################
