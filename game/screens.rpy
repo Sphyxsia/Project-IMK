@@ -288,62 +288,89 @@ style quick_button_text:
 ## Layar ini di ikutsertakan di menu utama dan permainan, dan menyediakan
 ## navigasi ke menu lainnya, dan untuk memulai permainan.
 
+transform menu_tilt(angle):
+    rotate angle
+    anchor (0.0, 0.0)
+
 screen navigation():
 
-    vbox:
-        style_prefix "navigation"
+    style_prefix "navigation"
+    
+    if main_menu:
 
-        xpos gui.navigation_xpos
-        yalign 0.5
+        fixed:
+            xfill True
+            yfill True
 
-        spacing gui.navigation_spacing
+            # PLAY
+            textbutton _("PLAY"):
+                xpos 65
+                ypos 265
+                at menu_tilt(-12)
+                action Start()
 
-        if main_menu:
+            # LOAD
+            textbutton _("LOAD"):
+                xpos 155
+                ypos 390
+                at menu_tilt(-12)
+                action ShowMenu("load")
 
-            textbutton _("Mulai") action Start()
+            # OPTIONS
+            textbutton _("OPTIONS"):
+                xpos 65
+                ypos 535
+                at menu_tilt(-12)
+                action ShowMenu("preferences")
 
-        else:
+            # ABOUT
+            textbutton _("ABOUT"):
+                xpos 240
+                ypos 650
+                at menu_tilt(-12)
+                action ShowMenu("about")
 
-            textbutton _("Riwayat") action ShowMenu("history")
+            # QUIT
+            textbutton _("QUIT"):
+                xpos 340
+                ypos 755
+                at menu_tilt(-12)
+                action Quit(confirm=True)
 
-            textbutton _("Simpan") action ShowMenu("save")
+    else:
 
-        textbutton _("Muat") action ShowMenu("load")
+        vbox:
+            style_prefix "navigation"
+            xpos 65
+            yalign 0.48
+            spacing 12
 
-        textbutton _("Setting") action ShowMenu("preferences")
-
-        if _in_replay:
-
-            textbutton _("Akhiri Replay") action EndReplay(confirm=True)
-
-        elif not main_menu:
-
-            textbutton _("Menu Utama") action MainMenu()
-
-        textbutton _("Tentang") action ShowMenu("about")
-
-        if renpy.variant("pc") or (renpy.variant("web") and not renpy.variant("mobile")):
-
-            ## Bantuan tidak perlu atau relevan dengan perangkat mobile.
-            textbutton _("Bantuan") action ShowMenu("help")
-
-        if renpy.variant("pc"):
-
-            ## Tombol keluar dilarang di iOS dan tidak diperlukan di Android dan
-            ## Web.
-            textbutton _("Keluar") action Quit(confirm=not main_menu)
+            textbutton _("HISTORY") action ShowMenu("history")
+            textbutton _("SAVE") action ShowMenu("save")
+            textbutton _("LOAD") action ShowMenu("load")
+            textbutton _("OPTIONS") action ShowMenu("preferences")
+            textbutton _("MAIN MENU") action MainMenu()
+            textbutton _("ABOUT") action ShowMenu("about")
+            textbutton _("QUIT") action Quit(confirm=True)
 
 
 style navigation_button is gui_button
 style navigation_button_text is gui_button_text
 
 style navigation_button:
-    size_group "navigation"
-    properties gui.button_properties("navigation_button")
+    background None
+    hover_background Solid("#e98caa33")
+    xminimum 250
+    xpadding 12
+    ypadding 5
 
 style navigation_button_text:
-    properties gui.text_properties("navigation_button")
-
+    color "#f3a3c1"
+    hover_color "#ffffff"
+    insensitive_color "#717a7e"
+    size 52
+    bold True
+    outlines [(3, "#211020", 0, 0)]
 
 ## Layar Menu utama ############################################################
 ##
@@ -353,29 +380,56 @@ style navigation_button_text:
 
 screen main_menu():
 
-    ## Ini Memastikan Layar Menu Yang Lain Telah Di Timpa
     tag menu
 
-    add gui.main_menu_background
+    add gui.main_menu_background:
+        xysize (config.screen_width, config.screen_height)
 
-    ## Frame kosong ini menggelap di menu utama.
-    frame:
-        style "main_menu_frame"
+    # Overlay tipis agar teks menu tetap terbaca.
+    add Solid("#09071122")
 
-    ## Pernyataan 'use' mengikutsertakan layar lain ke layar ini. Isi sebenarnya
-    ## dari menu utama adalah layar navigasi.
+    # Judul dan versi game.
+    vbox:
+        xpos 65
+        ypos 45
+        spacing 0
+
+        if gui.show_name:
+            text "[config.name!t]":
+                size 58
+                color "#f5c3d2"
+                bold True
+                outlines [(4, "#211020", 0, 0)]
+
+        text "[config.version]":
+            xpos -25
+            ypos 920
+            size 20
+            color "#bba5c4"
+            outlines [(2, "#000000", 0, 0)]
+
+    # Menu utama di sisi kiri.
     use navigation
 
-    if gui.show_name:
+    # Informasi support di kanan bawah.
+    vbox:
+        xalign 0.96
+        yalign 0.88
+        spacing 5
 
-        vbox:
-            style "main_menu_vbox"
+        text _("SUPPORT"):
+            xalign 1.0
+            size 34
+            color "#f1d66c"
+            bold True
+            outlines [(2, "#211020", 0, 0)]
 
-            text "[config.name!t]":
-                style "main_menu_title"
-
-            text "[config.version]":
-                style "main_menu_version"
+        textbutton _("PATREON"):
+            xalign 1.0
+            text_size 22
+            text_color "#e9b9ce"
+            text_hover_color "#ffffff"
+            action OpenURL("https://www.patreon.com/")
 
 
 style main_menu_frame is empty
@@ -385,17 +439,14 @@ style main_menu_title is main_menu_text
 style main_menu_version is main_menu_text
 
 style main_menu_frame:
-    xsize 420
+    xsize 0
     yfill True
-
-    background "gui/overlay/main_menu.png"
+    background None
 
 style main_menu_vbox:
-    xalign 1.0
-    xoffset -30
-    xmaximum 1200
-    yalign 1.0
-    yoffset -30
+    xalign 0.0
+    xpos 65
+    yalign 0.48
 
 style main_menu_text:
     properties gui.text_properties("main_menu", accent=True)
@@ -405,6 +456,7 @@ style main_menu_title:
 
 style main_menu_version:
     properties gui.text_properties("version")
+
 
 
 ## layar Menu Permainan ########################################################
@@ -422,67 +474,109 @@ screen game_menu(title, scroll=None, yinitial=0.0, spacing=0):
     style_prefix "game_menu"
 
     if main_menu:
-        add gui.main_menu_background
+        add gui.main_menu_background:
+            xysize (config.screen_width, config.screen_height)
     else:
-        add gui.game_menu_background
+        add gui.game_menu_background:
+            xysize (config.screen_width, config.screen_height)
 
+    add Solid("#09071199")
+
+    # Panel settings/menu di tengah layar.
     frame:
-        style "game_menu_outer_frame"
+        xalign 0.5
+        yalign 0.51
+        xsize 1280
+        ysize 690
+        background Solid("#17121de8")
+        padding (38, 24)
 
-        hbox:
+        vbox:
+            spacing 14
 
-            ## Memesan tempat untuk bagian navigasi.
-            frame:
-                style "game_menu_navigation_frame"
+            text title:
+                size 48
+                color "#e98caa"
+                bold True
+                outlines [(3, "#160b18", 0, 0)]
 
-            frame:
-                style "game_menu_content_frame"
+            add Solid("#b78b9d"):
+                xsize 1204
+                ysize 2
 
-                if scroll == "viewport":
+            # Area isi. Tetap mendukung viewport untuk halaman panjang
+            # seperti Save, Load, History, dan Help.
+            if scroll == "viewport":
 
-                    viewport:
-                        yinitial yinitial
-                        scrollbars "vertical"
-                        mousewheel True
-                        draggable True
-                        pagekeys True
+                viewport:
+                    yinitial yinitial
+                    scrollbars "vertical"
+                    mousewheel True
+                    draggable True
+                    pagekeys True
+                    xfill True
+                    yfill True
 
-                        side_yfill True
-
-                        vbox:
-                            spacing spacing
-
-                            transclude
-
-                elif scroll == "vpgrid":
-
-                    vpgrid:
-                        cols 1
-                        yinitial yinitial
-
-                        scrollbars "vertical"
-                        mousewheel True
-                        draggable True
-                        pagekeys True
-
-                        side_yfill True
-
+                    vbox:
                         spacing spacing
-
                         transclude
 
-                else:
+            elif scroll == "vpgrid":
 
+                vpgrid:
+                    cols 1
+                    yinitial yinitial
+                    scrollbars "vertical"
+                    mousewheel True
+                    draggable True
+                    pagekeys True
+                    xfill True
+                    yfill True
+                    spacing spacing
                     transclude
 
-    use navigation
+            else:
 
-    textbutton _("Kembali"):
-        style "return_button"
+                fixed:
+                    xfill True
+                    yfill True
+                    transclude
 
-        action Return()
+            add Solid("#b78b9d"):
+                xsize 1204
+                ysize 2
 
-    label title
+            # Navigasi bawah seperti referensi.
+            hbox:
+                xfill True
+                yalign 1.0
+                spacing 12
+
+                textbutton _("TITLE"):
+                    action MainMenu()
+                    text_size 22
+
+                textbutton _("SAVE"):
+                    action ShowMenu("save")
+                    text_size 22
+
+                textbutton _("LOAD"):
+                    action ShowMenu("load")
+                    text_size 22
+
+                textbutton _("HISTORY"):
+                    action ShowMenu("history")
+                    text_size 22
+
+                textbutton _("OPTIONS"):
+                    action ShowMenu("preferences")
+                    text_size 22
+
+                null width 30
+
+                textbutton _("RETURN"):
+                    action Return()
+                    text_size 22
 
     if main_menu:
         key "game_menu" action ShowMenu("main_menu")
@@ -502,22 +596,22 @@ style return_button is navigation_button
 style return_button_text is navigation_button_text
 
 style game_menu_outer_frame:
-    bottom_padding 45
-    top_padding 180
-
-    background "gui/overlay/game_menu.png"
+    xfill True
+    yfill True
+    background None
 
 style game_menu_navigation_frame:
-    xsize 420
+    xsize 0
     yfill True
 
 style game_menu_content_frame:
-    left_margin 60
-    right_margin 30
-    top_margin 15
+    xfill True
+    yfill True
+    padding (0, 0)
 
 style game_menu_viewport:
-    xsize 1380
+    xfill True
+    yfill True
 
 style game_menu_vscrollbar:
     unscrollable gui.unscrollable
@@ -527,17 +621,18 @@ style game_menu_side:
 
 style game_menu_label:
     xpos 75
-    ysize 180
+    ysize 100
 
 style game_menu_label_text:
-    size 75
-    color gui.accent_color
+    size 48
+    color "#e98caa"
     yalign 0.5
 
 style return_button:
     xpos gui.navigation_xpos
     yalign 1.0
     yoffset -45
+
 
 
 ## Layar About #################################################################
@@ -736,153 +831,122 @@ screen preferences():
 
     tag menu
 
-    use game_menu(_("Setting"), scroll="viewport"):
+    use game_menu(_("SETTINGS")):
 
-        vbox:
+        hbox:
+            xfill True
+            yfill True
+            spacing 38
 
-            hbox:
-                box_wrap True
+            # KOLOM KIRI
+            vbox:
+                xsize 300
+                spacing 16
 
-                if renpy.variant("pc") or renpy.variant("web"):
+                text _("LANGUAGE"):
+                    size 26
+                    color "#e98caa"
 
-                    vbox:
-                        style_prefix "radio"
-                        label _("Tampilan")
-                        textbutton _("Jendela") action Preference("display", "window")
-                        textbutton _("Layar Penuh") action Preference("display", "fullscreen")
+                textbutton _("English"):
+                    action Language(None)
+                    text_size 23
 
-                vbox:
-                    style_prefix "check"
-                    label _("Lompati")
-                    textbutton _("Belum Terlihat") action Preference("skip", "toggle")
-                    textbutton _("Setelah Pilihan") action Preference("after choices", "toggle")
-                    textbutton _("Transisi") action InvertSelected(Preference("transitions", "toggle"))
+                null height 8
 
-                ## Tipe tambahan vboxes "radio_pref" atau "check_pref" dapat di
-                ## tambahkan disini, untuk menambahkan tambahan preferensi yang
-                ## dibuat creator.
+                text _("NAMEBOX POSITION"):
+                    size 26
+                    color "#e98caa"
 
-            null height (4 * gui.pref_spacing)
+                textbutton _("Left"):
+                    action SetField(gui, "name_xalign", 0.0)
+                    text_size 23
 
-            hbox:
-                style_prefix "slider"
-                box_wrap True
+                textbutton _("Center"):
+                    action SetField(gui, "name_xalign", 0.5)
+                    text_size 23
 
-                vbox:
+                null height 8
 
-                    label _("Kecepatan Text")
+                text _("SKIP"):
+                    size 26
+                    color "#e98caa"
 
-                    bar value Preference("text speed")
+                textbutton _("Seen Text"):
+                    action Preference("skip", "seen")
+                    text_size 23
 
-                    label _("Waktu Otomatis-Maju")
+                textbutton _("All Text"):
+                    action Preference("skip", "all")
+                    text_size 23
 
-                    bar value Preference("auto-forward time")
+            # KOLOM TENGAH
+            vbox:
+                xsize 320
+                spacing 16
 
-                vbox:
+                text _("SCREEN MODE"):
+                    size 26
+                    color "#e98caa"
 
-                    if config.has_music:
-                        label _("Volume Musik")
+                textbutton _("Windowed"):
+                    action Preference("display", "window")
+                    text_size 23
 
-                        hbox:
-                            bar value Preference("music volume")
+                textbutton _("Fullscreen"):
+                    action Preference("display", "fullscreen")
+                    text_size 23
 
-                    if config.has_sound:
+                null height 8
 
-                        label _("Volume Suara")
+                text _("TEXT SPEED"):
+                    size 26
+                    color "#e98caa"
 
-                        hbox:
-                            bar value Preference("sound volume")
+                bar value Preference("text speed"):
+                    xsize 260
 
-                            if config.sample_sound:
-                                textbutton _("Tes") action Play("sound", config.sample_sound)
+                null height 8
 
+                text _("AUTO SPEED"):
+                    size 26
+                    color "#e98caa"
 
-                    if config.has_voice:
-                        label _("Volume Vokal")
+                bar value Preference("auto-forward time"):
+                    xsize 260
 
-                        hbox:
-                            bar value Preference("voice volume")
+            # KOLOM KANAN
+            vbox:
+                xsize 300
+                spacing 16
 
-                            if config.sample_voice:
-                                textbutton _("Tes") action Play("voice", config.sample_voice)
+                if config.has_music:
+                    text _("MUSIC"):
+                        size 26
+                        color "#e98caa"
 
-                    if config.has_music or config.has_sound or config.has_voice:
-                        null height gui.pref_spacing
+                    bar value Preference("music volume"):
+                        xsize 260
 
-                        textbutton _("Senyapkan Semua"):
-                            action Preference("all mute", "toggle")
-                            style "mute_all_button"
+                if config.has_sound:
+                    text _("SOUND"):
+                        size 26
+                        color "#e98caa"
 
+                    bar value Preference("sound volume"):
+                        xsize 260
 
-style pref_label is gui_label
-style pref_label_text is gui_label_text
-style pref_vbox is vbox
+                if config.has_voice:
+                    text _("VOICE"):
+                        size 26
+                        color "#e98caa"
 
-style radio_label is pref_label
-style radio_label_text is pref_label_text
-style radio_button is gui_button
-style radio_button_text is gui_button_text
-style radio_vbox is pref_vbox
+                    bar value Preference("voice volume"):
+                        xsize 260
 
-style check_label is pref_label
-style check_label_text is pref_label_text
-style check_button is gui_button
-style check_button_text is gui_button_text
-style check_vbox is pref_vbox
+                textbutton _("MUTE ALL"):
+                    action Preference("all mute", "toggle")
+                    text_size 23
 
-style slider_label is pref_label
-style slider_label_text is pref_label_text
-style slider_slider is gui_slider
-style slider_button is gui_button
-style slider_button_text is gui_button_text
-style slider_pref_vbox is pref_vbox
-
-style mute_all_button is check_button
-style mute_all_button_text is check_button_text
-
-style pref_label:
-    top_margin gui.pref_spacing
-    bottom_margin 3
-
-style pref_label_text:
-    yalign 1.0
-
-style pref_vbox:
-    xsize 338
-
-style radio_vbox:
-    spacing gui.pref_button_spacing
-
-style radio_button:
-    properties gui.button_properties("radio_button")
-    foreground "gui/button/radio_[prefix_]foreground.png"
-
-style radio_button_text:
-    properties gui.text_properties("radio_button")
-
-style check_vbox:
-    spacing gui.pref_button_spacing
-
-style check_button:
-    properties gui.button_properties("check_button")
-    foreground "gui/button/check_[prefix_]foreground.png"
-
-style check_button_text:
-    properties gui.text_properties("check_button")
-
-style slider_slider:
-    xsize 525
-
-style slider_button:
-    properties gui.button_properties("slider_button")
-    yalign 0.5
-    left_margin 15
-
-style slider_button_text:
-    properties gui.text_properties("slider_button")
-
-style slider_vbox:
-    xsize 675
 
 
 ## Layar Riwayat ###############################################################
