@@ -31,6 +31,8 @@ define nco = Character('???', color="#ffffff")
 define nce = Character('???', color="#ffffff")
 define aco = Character('???', color="#ffffff")
 define ace = Character('???', color="#ffffff")
+define pn = Character('Panitia', color="#ffffff")
+define kr = Character('Kiki & Reza', color="#ffffff")
 # Game dimulai disini.
 label start:
 
@@ -217,6 +219,55 @@ label bab3:
     tk1 "Hahaha, plot twist banget."
 
     tk2 "Udah udah. Itu panitianya udah mulai ngumpulin orang-orang. Ayo ke sana."
+
+
+    scene bg lake1 with dissolve
+    "Para relawan berkumpul. Panitia berdiri di depan membawa kantong-kantong sampah."
+
+    pn "Selamat pagi, Teman-teman relawan! Terima kasih sudah datang. Hari ini tugas kita cukup simple: membersihkan Danau Bougainvillea dari sampah."
+
+    tk1 "(bisik ke Kiki) kok GAMPANG. Liat aja tuh sampahnya segunung."
+
+    pn "Mungkin kelihatannya cuma kayak kerja bakti biasa. Tapi Danau Bougainvillea ini salah satu sumber mata air utama yang digunakan masyarakat sekitar. Kalau airnya kotor, banyak orang akan terkena dampak nya, kita tidak boleh membiarkan hal itu terjadi."
+
+    tk2 "Ternyata sepenting itu..."
+
+    k "Kalau gitu kita harus kerja yang bener nih."
+
+    pn "Betul. Silahkan ambil kantong sampah dan sarung tangan, kita mulai dari sisi danau. Nanti kita  cek lagi nanti. Semangat ya!"
+
+    "Kiki, Reza, dan Dinda mulai memungut sampah botol, plastik, dan ranting di tepi danau."
+
+    scene bg lake1 with dissolve
+    tk1 "Ki, taruhan yuk. Siapa yang paling banyak ngambil sampah, dia menang."
+
+    k "Hah? Taruhan apaan?"
+
+    tk1 "Yang kalah traktir makan siang gratis. Gimana?"
+
+    k "Oke. mulai siapin duitnya aja, Za."
+
+    tk1 "liat aja nanti duit siapa yang akan habis."
+
+    tk1 "Rasakan jurus Kantong Sampah Lubang Hitam Raksasa!"
+
+    k "Tcih! Gitu doang? Nih, rasakan jurus serangan rudal botol plastik, nyahuu!"
+
+    tk1 "Curang! Itu botol sampah punyaku!"
+
+
+    scene bg lake1 with dissolve
+    tk2 "(menghela napas) Kalian berdua..."
+
+    "Dinda menghampiri dengan tangan di pinggang."
+
+    tk2 "KIKI! REZA! Kerja yang bener dong! Dari tadi bercanda terus, sampahnya masih banyak tuh!"
+
+    kr "Ehh iya, maaf, Din..."
+
+    tk2 "Kita di sini mau bersihin danau, bukan lomba adu kumpulan sampah. Ayo lanjut kerja."
+
+    "Mereka bertiga kembali bekerja dengan serius."
 
     $ lake_start()
 
