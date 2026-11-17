@@ -14,6 +14,9 @@ image bg room1 = "images/bg/room_night.jpg"
 image bg room2 = "images/bg/room.jpg"
 image bg class = "images/bg/campus_inside.png"
 image bg street = "images/bg/street_morning.jpg"
+image bg kereta = "images/bg/train_car.jpg"
+image bg window_kereta = "images/bg/train_window.jpg"
+image bg lake1 = "images/bg/lake_morning.jpg"
 # Deklarasikan karakter yang digunakan di game.
 define k = Character('Kiki', color="#ffffff")
 define a = Character('Adek Kiki', color="#ffffff")
@@ -31,30 +34,50 @@ define ace = Character('???', color="#ffffff")
 # Game dimulai disini.
 label start:
 
-    scene bg room1 with dissolve
-    i "Kiki, sudah makan?"
+    scene bg kereta with dissolve
 
-    k "Sudah, Bu. Tadi beli nasi sama telur. Biar hemat, hehe."
+    k "Halo ibuuu"
 
-    b "Hemat boleh, tapi jangan sampai sakit."
+    i "Kiki! Udah sampe belum, Nak? Dari tadi Ibu khawatir jadi telepon kamu."
 
-    a "Kak Kiki! Kapan pulang? Aku mau oleh-oleh!"
+    k "Belum bu, kiki Masih di kereta, ini sebentar lagi nyampe kok."
 
-    k "Nanti kalau libur, ya. Kakak bawain stiker."
+    i "Alhamdulillah. Jangan sampai ketiduran ya, nanti kelewatan stasiun nya."
 
-    a "Asyik! Tapi, Kak, perutku agak sakit dari tadi."
+    k "Enggak kok Bu, Kiki melek terus dari tadi."
 
-    i "Ibu sedang memperhatikan air sumur kita. Beberapa hari ini airnya terlihat keruh."
+    i "Jangan mie instan terus nanti di sana."
 
-    k "Keruh? Dinda tadi minum air sumur?"
+    a "Kak Kikiiiiiiiii! ^w^ Kakak udah dimanaaaaaaa?"
 
-    i "ya, Nak. Ibu belum tahu apa penyebabnya. Mulai sekarang, kita cari sumber air yang aman dulu."
+    k "hehe hi Dek, Kakak belum nyampeeeee."
 
-    b "Kita juga perlu mencari tahu kenapa sumurnya berubah."
+    a "masa lama banget kakkkk . situ kereta apa cara kerja pemerintah sih kak wkwkwk!"
 
-    k "Baik, Bu. Jangan diminum dulu kalau belum dipastikan aman. Kalau Dinda masih sakit, bawa periksa ke tenaga kesehatan, ya."
+    k "hehhh diemm! nanti kedengaran intel kakak yang kena"
 
-    "Panggilan berakhir, Kiki memikirkan keluarganya. Ia ingin membantu, tetapi ia harus belajar mancari solusi yang tepata, bukan sekedar menebak penyebab masalah."
+    a "Wleee~, Kakak takut yaa sendirian di tempat baru, awas kak nanti ada yang ketawa tengah malem lohh ooooohhhh~?"
+
+    k "adek pikir kakak takut! Kakak udah gede yaaa, awas aja dikamar adek nanti ada..."
+
+    i "Sudah, sudah. Adek, jangan ganggu Kakak."
+
+    ". . . ."
+
+    i "Ya sudah, hati-hati di jalan ya kiki. Kalau sudah sampai kabarin Ibu ya."
+
+    k "okay ibuu. Kiki sayang Ibu. Salam buat Adek."
+
+    a "Aku masih disini tauuu!"
+
+    "Panggilan berakhir, Kiki menurunkan HP dari telinganya."
+    show bg window_kereta with fade
+    "Kiki menoleh ke jendela dan keluar. pemandangan sawah dan rumah-rumah berganti pelan menjadi gedung-gedung kota yang asing. Cahaya sore memantul di kaca."
+    show bg street with moveinright
+    k "Hmm... jadi ini tempat baruku"
+    
+    "Time Skip"
+    jump bab3
 
     show bg room2 with fade
     "Pagi itu,token listrik kos Kiki habis. HP-nya tinggal 3 persen, sementara tugas kuliah harus dikirim sebelum malam."
@@ -178,11 +201,22 @@ label bab2:
 
 label bab3:
 
-    "Kiki sampai di sebuah danau."
+    scene bg room2
+    k "Oh iya, hari ini aku kerja bakti di danau. Hmm…. jam sembilan... Masih sempet lah yak. Berangkat ah."
 
-    "Ia melihat banyak sampah yang mengotori air."
+    scene bg street with moveinright
+    show bg lake1 with pixellate
+    tk1 "Woi, Ki! Sini sini! Tumben nggak telat."
 
-    k "Aku harus membersihkan sampah ini!"
+    k "Iya lahh, Aku kan anak rajin."
+
+    tk2 "Rajin dari mana? Kemarin aja kamu bilang malas ikut."
+
+    k "iyahh yang kemarin udah ditangkep aparat, aku kloningan nya."
+
+    tk1 "Hahaha, plot twist banget."
+
+    tk2 "Udah udah. Itu panitianya udah mulai ngumpulin orang-orang. Ayo ke sana."
 
     $ lake_start()
 
