@@ -75,7 +75,7 @@ label start:
     "Panggilan berakhir, Kiki menurunkan HP dari telinganya."
     show bg window_kereta with fade
     "Kiki menoleh ke jendela dan keluar. pemandangan sawah dan rumah-rumah berganti pelan menjadi gedung-gedung kota yang asing. Cahaya sore memantul di kaca."
-    show bg street with moveinright
+    show bg street with fade
     k "Hmm... jadi ini tempat baruku"
 
     "Time Skip"
@@ -157,7 +157,7 @@ label m1_berhasil:
 
     k "Energi matahari merupakan sumber energi terbarukan, tetapi kita tetap perlu menyimpan dan menggunakannya dengan benar."
 
-    jump bab2
+    jump bab3
 
 
 label m1_gagal:
@@ -168,7 +168,7 @@ label m1_gagal:
 
     k "Aku tetap bisa belajar dari kesalahan ini."
 
-    jump bab2
+    jump bab3
 
 
 label bab2:
@@ -341,15 +341,20 @@ init python:
     def pipe_generate_board():
 
         # Membuat jalur zigzag yang melewati semua kotak
+        # Membuat jalur zigzag per kolom.
+        # START: kiri atas.
+        # FINISH: kanan bawah.
+
         path = []
 
-        for r in range(PIPE_ROWS):
-            if r % 2 == 0:
-                cols = range(PIPE_COLS)
-            else:
-                cols = range(PIPE_COLS - 1, -1, -1)
+        for c in range(PIPE_COLS):
 
-            for c in cols:
+            if c % 2 == 0:
+                rows = range(PIPE_ROWS)
+            else:
+                rows = range(PIPE_ROWS - 1, -1, -1)
+
+            for r in rows:
                 path.append((r, c))
 
         start = path[0]
@@ -426,9 +431,11 @@ init python:
             connections[a].add(d)
             connections[b].add((d + 2) % 4)
 
-        # START menerima aliran dari kiri (W), FINISH mengalir ke kanan (E).
+        # START menerima koneksi dari luar sebelah kiri.
         connections[start].add(3)
-        connections[finish].add(3)
+
+        # FINISH mengeluarkan koneksi ke luar sebelah kanan.
+        connections[finish].add(1)
 
         board = []
 
@@ -476,16 +483,21 @@ init python:
         store.pipe_message = ""
 
 
+
     def pipe_rotate(index):
 
         cell = store.pipe_board[index]
 
+        # Black dan endpoint tidak bisa diputar.
         if cell[1]:
             return
 
+        # Putar pipa 90 derajat.
         cell[2] = (cell[2] + 90) % 360
 
+        # Refresh screen agar kondisi menang diperiksa ulang.
         renpy.restart_interaction()
+
 
     def pipe_is_solved():
 
@@ -494,75 +506,23 @@ init python:
         if len(board) != PIPE_COLS * PIPE_ROWS:
             return False
 
-        start_index = 0
-        finish_index = len(board) - 1
+        # cell[2] adalah rotasi saat ini.
+        # cell[3] adalah rotasi solusi yang disimpan generator.
+        for cell in board:
 
-        # Semua konektor harus bertemu dengan pipa tetangga.
-        # Hanya START kiri dan FINISH kanan yang boleh keluar papan.
-        for i, cell in enumerate(board):
+            current_dirs = pipe_rotate_dirs(
+                PIPE_BASE[cell[0]], cell[2]
+            )
 
-            r = i // PIPE_COLS
-            c = i % PIPE_COLS
-            dirs = pipe_rotate_dirs(PIPE_BASE[cell[0]], cell[2])
+            target_dirs = pipe_rotate_dirs(
+                PIPE_BASE[cell[0]], cell[3]
+            )
 
-            for d in dirs:
+            if current_dirs != target_dirs:
+                return False
 
-                if d == 0:
-                    nr, nc = r - 1, c
-                elif d == 1:
-                    nr, nc = r, c + 1
-                elif d == 2:
-                    nr, nc = r + 1, c
-                else:
-                    nr, nc = r, c - 1
+        return True
 
-                if not (0 <= nr < PIPE_ROWS and 0 <= nc < PIPE_COLS):
-                    if (i == start_index and d == 3) or (i == finish_index and d == 1):
-                        continue
-                    return False
-
-                neighbor = board[nr * PIPE_COLS + nc]
-                neighbor_dirs = pipe_rotate_dirs(
-                    PIPE_BASE[neighbor[0]], neighbor[2]
-                )
-
-                if (d + 2) % 4 not in neighbor_dirs:
-                    return False
-
-        # Pastikan semua pipa terhubung dari START sampai FINISH.
-        visited = set()
-        stack = [start_index]
-
-        while stack:
-            i = stack.pop()
-
-            if i in visited:
-                continue
-
-            visited.add(i)
-
-            r = i // PIPE_COLS
-            c = i % PIPE_COLS
-            dirs = pipe_rotate_dirs(PIPE_BASE[board[i][0]], board[i][2])
-
-            for d in dirs:
-                if d == 0:
-                    nr, nc = r - 1, c
-                elif d == 1:
-                    nr, nc = r, c + 1
-                elif d == 2:
-                    nr, nc = r + 1, c
-                else:
-                    nr, nc = r, c - 1
-
-                if not (0 <= nr < PIPE_ROWS and 0 <= nc < PIPE_COLS):
-                    continue
-
-                ni = nr * PIPE_COLS + nc
-                if ni not in visited:
-                    stack.append(ni)
-
-        return len(visited) == len(board) and finish_index in visited
 
 
 screen pipe_puzzle():
