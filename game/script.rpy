@@ -77,9 +77,8 @@ label start:
     "Kiki menoleh ke jendela dan keluar. pemandangan sawah dan rumah-rumah berganti pelan menjadi gedung-gedung kota yang asing. Cahaya sore memantul di kaca."
     show bg street with moveinright
     k "Hmm... jadi ini tempat baruku"
-    
+
     "Time Skip"
-    jump bab3
 
     show bg room2 with fade
     "Pagi itu,token listrik kos Kiki habis. HP-nya tinggal 3 persen, sementara tugas kuliah harus dikirim sebelum malam."
@@ -198,6 +197,26 @@ label bab2:
 
     d "Betul. Kita juga harus memastikan sumbernya layak dan kualitas airnya memenuhi persyaratan."
 
+    jump minigame_pipa
+
+    label minigame_pipa:
+
+    $ pipe_generate_board()
+
+    call screen pipe_puzzle
+
+    if _return:
+
+        k "Yes! Semua pipanya sudah tersambung!"
+
+        $ minigame += 1
+
+    else:
+
+        k "Sepertinya aku perlu mencoba lagi nanti."
+
+    return
+
     
     jump bab3
 
@@ -273,7 +292,418 @@ label bab3:
 
     call screen lake_game("lake_win", "lake_lose")
 
+label ending:
+
     return
+
+
+default pipe_board = []
+default pipe_message = ""
+
+init python:
+
+    import random
+
+    PIPE_COLS = 5
+    PIPE_ROWS = 6
+
+    # cell[1] = True berarti BLACK/permanen.
+    # cell[1] = False berarti BROWN/bisa diputar.
+    PIPE_IMAGES = {
+        ("I", True): "images/minigame/pipe/pipe_i_black.png",
+        ("R", True): "images/minigame/pipe/pipe_r_black.png",
+        ("T", True): "images/minigame/pipe/pipe_t_black.png",
+
+        ("I", False): "images/minigame/pipe/pipe_i_brown.png",
+        ("R", False): "images/minigame/pipe/pipe_r_brown.png",
+        ("T", False): "images/minigame/pipe/pipe_t_brown.png",
+    }
+
+    # Arah: N=0, E=1, S=2, W=3
+
+    PIPE_BASE = {
+        "I": [0, 2],
+        "R": [0, 1],
+        "T": [0, 2, 3],
+    }
+
+    def pipe_rotate_dirs(dirs, angle):
+        steps = angle // 90
+        return sorted([(d + steps) % 4 for d in dirs])
+
+    def pipe_find_rotation(kind, target):
+        for angle in [0, 90, 180, 270]:
+            if pipe_rotate_dirs(PIPE_BASE[kind], angle) == sorted(target):
+                return angle
+        return 0
+
+    
+    def pipe_generate_board():
+
+        # Membuat jalur zigzag yang melewati semua kotak
+        path = []
+
+        for r in range(PIPE_ROWS):
+            if r % 2 == 0:
+                cols = range(PIPE_COLS)
+            else:
+                cols = range(PIPE_COLS - 1, -1, -1)
+
+            for c in cols:
+                path.append((r, c))
+
+        start = path[0]
+        finish = path[-1]
+
+        # Membuat jalur antar kotak
+        edges = set()
+
+        def add_edge(a, b):
+            edges.add(tuple(sorted((a, b))))
+
+        for i in range(len(path) - 1):
+            add_edge(path[i], path[i + 1])
+
+        # Tambahkan cabang agar muncul pipa T
+        candidates = []
+
+        for r in range(PIPE_ROWS):
+            for c in range(PIPE_COLS):
+
+                for dr, dc in [(0, 1), (1, 0)]:
+                    nr, nc = r + dr, c + dc
+
+                    if nr >= PIPE_ROWS or nc >= PIPE_COLS:
+                        continue
+
+                    a = (r, c)
+                    b = (nr, nc)
+                    edge = tuple(sorted((a, b)))
+
+                    if edge not in edges:
+                        candidates.append(edge)
+
+        random.shuffle(candidates)
+
+        added = 0
+
+        for a, b in candidates:
+
+            if added >= 4:
+                break
+
+            degree_a = sum(a in e for e in edges)
+            degree_b = sum(b in e for e in edges)
+
+            if a in (start, finish) or b in (start, finish):
+                continue
+
+            if degree_a == 2 and degree_b == 2:
+                edges.add((a, b))
+                added += 1
+
+        # Menentukan koneksi tiap pipa
+        connections = {
+            (r, c): set()
+            for r in range(PIPE_ROWS)
+            for c in range(PIPE_COLS)
+        }
+
+        for a, b in edges:
+
+            dr = b[0] - a[0]
+            dc = b[1] - a[1]
+
+            if dr == -1:
+                d = 0
+            elif dc == 1:
+                d = 1
+            elif dr == 1:
+                d = 2
+            else:
+                d = 3
+
+            connections[a].add(d)
+            connections[b].add((d + 2) % 4)
+
+        # START menerima aliran dari kiri (W), FINISH mengalir ke kanan (E).
+        connections[start].add(3)
+        connections[finish].add(3)
+
+        board = []
+
+        for r in range(PIPE_ROWS):
+            for c in range(PIPE_COLS):
+
+                dirs = sorted(connections[(r, c)])
+
+                if len(dirs) == 3:
+                    kind = "T"
+                elif len(dirs) == 2:
+                    if (dirs[1] - dirs[0]) % 4 == 2:
+                        kind = "I"
+                    else:
+                        kind = "R"
+                else:
+                    raise Exception(
+                        "Pipa memiliki konektor tidak valid: {}".format(dirs)
+                    )
+
+                target = pipe_find_rotation(kind, dirs)
+
+                # START dan FINISH selalu permanen karena memakai gambar khusus.
+                # Kotak lainnya: Black permanen, Brown bisa diputar.
+                is_endpoint = (r, c) == start or (r, c) == finish
+                fixed = is_endpoint or (random.random() < 0.25)
+
+                if fixed:
+                    rotation = target
+                else:
+                    choices = [
+                        angle for angle in [0, 90, 180, 270]
+                        if angle != target
+                    ]
+                    rotation = random.choice(choices)
+
+                board.append([
+                    kind,
+                    fixed,
+                    rotation,
+                    target
+                ])
+
+        store.pipe_board = board
+        store.pipe_message = ""
+
+
+    def pipe_rotate(index):
+
+        cell = store.pipe_board[index]
+
+        if cell[1]:
+            return
+
+        cell[2] = (cell[2] + 90) % 360
+
+        renpy.restart_interaction()
+
+    def pipe_is_solved():
+
+        board = store.pipe_board
+
+        if len(board) != PIPE_COLS * PIPE_ROWS:
+            return False
+
+        start_index = 0
+        finish_index = len(board) - 1
+
+        # Semua konektor harus bertemu dengan pipa tetangga.
+        # Hanya START kiri dan FINISH kanan yang boleh keluar papan.
+        for i, cell in enumerate(board):
+
+            r = i // PIPE_COLS
+            c = i % PIPE_COLS
+            dirs = pipe_rotate_dirs(PIPE_BASE[cell[0]], cell[2])
+
+            for d in dirs:
+
+                if d == 0:
+                    nr, nc = r - 1, c
+                elif d == 1:
+                    nr, nc = r, c + 1
+                elif d == 2:
+                    nr, nc = r + 1, c
+                else:
+                    nr, nc = r, c - 1
+
+                if not (0 <= nr < PIPE_ROWS and 0 <= nc < PIPE_COLS):
+                    if (i == start_index and d == 3) or (i == finish_index and d == 1):
+                        continue
+                    return False
+
+                neighbor = board[nr * PIPE_COLS + nc]
+                neighbor_dirs = pipe_rotate_dirs(
+                    PIPE_BASE[neighbor[0]], neighbor[2]
+                )
+
+                if (d + 2) % 4 not in neighbor_dirs:
+                    return False
+
+        # Pastikan semua pipa terhubung dari START sampai FINISH.
+        visited = set()
+        stack = [start_index]
+
+        while stack:
+            i = stack.pop()
+
+            if i in visited:
+                continue
+
+            visited.add(i)
+
+            r = i // PIPE_COLS
+            c = i % PIPE_COLS
+            dirs = pipe_rotate_dirs(PIPE_BASE[board[i][0]], board[i][2])
+
+            for d in dirs:
+                if d == 0:
+                    nr, nc = r - 1, c
+                elif d == 1:
+                    nr, nc = r, c + 1
+                elif d == 2:
+                    nr, nc = r + 1, c
+                else:
+                    nr, nc = r, c - 1
+
+                if not (0 <= nr < PIPE_ROWS and 0 <= nc < PIPE_COLS):
+                    continue
+
+                ni = nr * PIPE_COLS + nc
+                if ni not in visited:
+                    stack.append(ni)
+
+        return len(visited) == len(board) and finish_index in visited
+
+
+screen pipe_puzzle():
+
+    modal True
+
+    add "#172426"
+
+    text "START":
+        color "#39ff55"
+        size 25
+        xalign 0.5
+        ypos 100
+
+    text "FINISH":
+        color "#39ff55"
+        size 25
+        xalign 0.5
+        ypos 800
+
+    text "PIPE CONNECTION":
+        xalign 0.5
+        ypos 12
+        size 32
+        color "#ffffff"
+
+    text "Putar pipa Brown sampai semua jalur tersambung":
+        xalign 0.5
+        ypos 55
+        size 16
+        color "#dddddd"
+
+    
+    fixed:
+
+        $ cell_size = 68
+        $ board_width = PIPE_COLS * cell_size
+        $ board_height = PIPE_ROWS * cell_size
+
+        $ board_x = (config.screen_width - board_width) // 2
+        $ board_y = (config.screen_height - board_height) // 2 + 30
+
+        # Label START
+        text "START":
+            color "#39ff55"
+            size 22
+            xpos board_x - 85
+            ypos board_y + 18
+
+        # Label FINISH
+        text "FINISH":
+            color "#39ff55"
+            size 22
+            xpos board_x - 85
+            ypos board_y + (PIPE_ROWS - 1) * cell_size + 18
+
+        
+        for i, cell in enumerate(pipe_board):
+
+            $ row = i // PIPE_COLS
+            $ col = i % PIPE_COLS
+
+            $ px = board_x + col * cell_size
+            $ py = board_y + row * cell_size
+
+            $ image_path = PIPE_IMAGES[(cell[0], cell[1])]
+
+            # START
+            if i == 0:
+
+                add Transform(
+                    "images/minigame/pipe/pipe_start.png",
+                    zoom=2
+                ):
+                    xpos px
+                    ypos py
+
+            # FINISH
+            elif i == len(pipe_board) - 1:
+
+                add Transform(
+                    "images/minigame/pipe/pipe_done.png",
+                    zoom=2
+                ):
+                    xpos px
+                    ypos py
+
+            # BLACK: tidak bisa diputar
+            elif cell[1]:
+
+                add Transform(
+                    image_path,
+                    zoom=2,
+                    rotate=cell[2]
+                ):
+                    xpos px
+                    ypos py
+
+            # BROWN: bisa diputar
+            else:
+
+                imagebutton:
+                    idle Transform(
+                        image_path,
+                        zoom=2,
+                        rotate=cell[2]
+                    )
+
+                    hover Transform(
+                        image_path,
+                        zoom=2,
+                        rotate=cell[2]
+                    )
+
+                    xpos px
+                    ypos py
+
+                    action Function(pipe_rotate, i)
+
+
+    if pipe_is_solved():
+
+        frame:
+            xalign 0.5
+            yalign 0.95
+
+            vbox:
+                spacing 8
+
+                text "SEMUA PIPA TERSAMBUNG!" color "#40e68b"
+
+                textbutton "LANJUT":
+                    xalign 0.5
+                    action Return(True)
+
+    else:
+
+        textbutton "KELUAR":
+            xalign 0.95
+            yalign 0.95
+            action Return(False)
 
 
 init python:
@@ -482,8 +912,12 @@ label lake_test:
 
 label lake_win:
     "You cleaned the lake!"
-    return
+    jump ending
 
 label lake_lose:
     "You lost... try again."
+    jump ending
+
+
+
     return
