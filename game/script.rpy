@@ -292,6 +292,73 @@ label bab3:
 
     call screen lake_game("lake_win", "lake_lose")
 
+label lake_win:
+
+    scene bg lake1 with dissolve
+    tk1 "(terkapar di rumput) huft…. Capek... Oke, oke, aku ngaku kalah, Ki."
+
+    k "Hehe, makanya jangan belagu pake nantangin lagii."
+
+    tk2 "hadeh kalian ini, baru serius kalau udah denger makan siang."
+
+    k "Tapi liat deh. Danaunya jadi bersih banget."
+
+    tk2 "Iya. Rasanya puas banget ya."
+
+    "Para panitia datang memeriksa, lalu mengangguk puas."
+
+    pn "Luar biasa! Terima kasih banyak, ya. Danau ini jadi bersih kembali berkat kalian."
+
+    tk1 "Nah, soal taruhan tadi… boleh minggu depan aja ga ki belum dapet setoran hehe"
+
+    k "eits gabisa! Traktir sekarang Mie ayam pak rusdi ya!"
+
+    tk2 "Aku ikut dong!"
+
+    tk1 "dih kok jadinya traktir berdua ;-;, dompetku udah mulai nangis nih."
+
+    "Danau kembali bersih dan mereka makan mie ayam bareng bertiga."
+
+    jump ending
+
+label lake_lose:
+
+    tk1 "YES! Aku menang, Ki! Jangan lupa yaaaa!"
+
+    k "Iya iya… duh Padahal dikit lagi."
+
+    "Para panitia datang untuk memeriksa. Wajah mereka tampak ragu setelah melihat sekeliling."
+
+    pn "Hmm... ternyata masih banyak sampah di sini."
+
+    "Suasana berubah hening. Kiki, Reza, dan Dinda saling pandang."
+
+    k "Kami minta maaf, Kak. Usaha kami belum cukup."
+
+    tk2 "Maaf, kami terlalu banyak bercanda tadi."
+
+    tk1 "(menunduk) Maaf, Kak. Ini salah kami juga."
+
+    "Panitia tersenyum dan menepuk pundak mereka."
+
+    pn "Tidak apa-apa, kok. Kami yang akan lanjutkan besok. Kalian sudah bantu banyak hari ini. Kami tidak mau merepotkan kalian lagi, jadi kalian boleh pulang. Terima kasih banyak atas bantuannya hari ini."
+
+    k "...Baik, Kak. Terima kasih juga."
+
+    "Ketiganya berjalan meninggalkan danau dengan langkah lesu."
+
+    tk1 "(pelan) Jadi... mie ayamnya gimana?"
+
+    tk2 "duh lagi nggak enak, Za. Lain kali aja deh."
+
+    k "iya nanti aja, udah hilang mood ku (sama duit ku wkwkwk)"
+
+    tk1 "Iya... aku juga. Mending pulang dulu."
+
+    "Mereka tidak jadi makan mie ayam bareng. Masing-masing pulang ke rumah/kos."
+
+    jump ending
+
 label ending:
 
     return
@@ -862,22 +929,9 @@ transform lake_swim(flipped=False):
         repeat
 
 
-## ---------------------------------------------------------------
-## TEST LABELS (delete these once it works in your real script)
-## ---------------------------------------------------------------
 label lake_test:
     scene black
     $ lake_start()
     call screen lake_game("lake_win", "lake_lose")
 
-label lake_win:
-    "You cleaned the lake!"
-    jump ending
 
-label lake_lose:
-    "You lost... try again."
-    jump ending
-
-
-
-    return
