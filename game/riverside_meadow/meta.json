@@ -1,0 +1,188 @@
+{
+  "source_file": "riverside_meadow.jpg",
+  "width": 1920,
+  "height": 1080,
+  "layer_count": 9,
+  "model": "Depth-Anything-V2-Small-hf",
+  "device": "cpu",
+  "depth_rule": "black=far, white=near",
+  "build_parameters": {
+    "layers": 9,
+    "feather": 14,
+    "dilation": 32,
+    "strength": 0.7,
+    "soft_mask_overlap": 0.15
+  },
+  "recommended_depth": {
+    "near_layer": 8,
+    "far_layer": 0,
+    "dilation_px": 32,
+    "feather_px": 14
+  },
+  "recommended_motion": {
+    "max_x_by_layer": [
+      6.0,
+      10.499999865889553,
+      14.999999731779106,
+      19.99999964237211,
+      26.0,
+      33.499999105930435,
+      42.0,
+      51.50000125169739,
+      62.0
+    ],
+    "max_y_by_layer": [
+      2.7,
+      4.724999939650299,
+      6.7499998793005975,
+      8.99999983906745,
+      11.700000000000001,
+      15.074999597668697,
+      18.900000000000002,
+      23.175000563263826,
+      27.900000000000002
+    ],
+    "strength": 0.7,
+    "preview_strength": 0.45499999999999996,
+    "zoom": 1.02
+  },
+  "layers": [
+    {
+      "index": 0,
+      "file": "layer_0.webp",
+      "depth_range": [
+        0,
+        27
+      ],
+      "role": "far",
+      "soft_mask_overlap": 0.15,
+      "dilation_px": 32,
+      "feather_px": 14,
+      "inpaint_radius": 11
+    },
+    {
+      "index": 1,
+      "file": "layer_1.webp",
+      "depth_range": [
+        28,
+        55
+      ],
+      "role": "mid",
+      "soft_mask_overlap": 0.15,
+      "dilation_px": 32,
+      "feather_px": 14,
+      "inpaint_radius": 11
+    },
+    {
+      "index": 2,
+      "file": "layer_2.webp",
+      "depth_range": [
+        56,
+        84
+      ],
+      "role": "mid",
+      "soft_mask_overlap": 0.15,
+      "dilation_px": 32,
+      "feather_px": 14,
+      "inpaint_radius": 11
+    },
+    {
+      "index": 3,
+      "file": "layer_3.webp",
+      "depth_range": [
+        85,
+        112
+      ],
+      "role": "mid",
+      "soft_mask_overlap": 0.15,
+      "dilation_px": 32,
+      "feather_px": 14,
+      "inpaint_radius": 11
+    },
+    {
+      "index": 4,
+      "file": "layer_4.webp",
+      "depth_range": [
+        113,
+        141
+      ],
+      "role": "mid",
+      "soft_mask_overlap": 0.15,
+      "dilation_px": 32,
+      "feather_px": 14,
+      "inpaint_radius": 11
+    },
+    {
+      "index": 5,
+      "file": "layer_5.webp",
+      "depth_range": [
+        142,
+        169
+      ],
+      "role": "mid",
+      "soft_mask_overlap": 0.15,
+      "dilation_px": 32,
+      "feather_px": 14,
+      "inpaint_radius": 11
+    },
+    {
+      "index": 6,
+      "file": "layer_6.webp",
+      "depth_range": [
+        170,
+        198
+      ],
+      "role": "mid",
+      "soft_mask_overlap": 0.15,
+      "dilation_px": 32,
+      "feather_px": 14,
+      "inpaint_radius": 11
+    },
+    {
+      "index": 7,
+      "file": "layer_7.webp",
+      "depth_range": [
+        199,
+        226
+      ],
+      "role": "mid",
+      "soft_mask_overlap": 0.15,
+      "dilation_px": 32,
+      "feather_px": 14,
+      "inpaint_radius": 11
+    },
+    {
+      "index": 8,
+      "file": "layer_8.webp",
+      "depth_range": [
+        227,
+        255
+      ],
+      "role": "near",
+      "soft_mask_overlap": 0.15,
+      "dilation_px": 32,
+      "feather_px": 14,
+      "inpaint_radius": 11
+    }
+  ],
+  "format": "webp",
+  "target_mb": 2.0,
+  "total_size_mb": 1.26,
+  "quality": 84,
+  "scale": 1.0,
+  "included_in_size": [
+    "original.webp",
+    "depth.webp",
+    "layer_0.webp",
+    "layer_1.webp",
+    "layer_2.webp",
+    "layer_3.webp",
+    "layer_4.webp",
+    "layer_5.webp",
+    "layer_6.webp",
+    "layer_7.webp",
+    "layer_8.webp",
+    "meta.json"
+  ],
+  "compression_warning": false
+}

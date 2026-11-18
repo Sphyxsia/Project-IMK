@@ -382,8 +382,49 @@ screen main_menu():
 
     tag menu
 
-    add gui.main_menu_background:
+    # Posisi mouse diperbarui secara berkala agar parallax mengikuti cursor.
+    default mouse_pos = (config.screen_width / 2, config.screen_height / 2)
+    timer 0.03 repeat True action SetScreenVariable("mouse_pos", renpy.get_mouse_pos())
+
+    # Background parallax: layer jauh bergerak sedikit, layer dekat lebih jauh.
+    fixed:
         xysize (config.screen_width, config.screen_height)
+        add "riverside_meadow/layer_0.webp":
+            xysize (int(config.screen_width * 1.02), int(config.screen_height * 1.02))
+            xpos int(-config.screen_width * 0.01 + (config.screen_width / 2 - mouse_pos[0]) * 6.0/960.0 * (config.screen_width/1920.0))
+            ypos int(-config.screen_height * 0.01 + (config.screen_height / 2 - mouse_pos[1]) * 2.7/540.0 * (config.screen_height/1080.0))
+        add "riverside_meadow/layer_1.webp":
+            xysize (int(config.screen_width * 1.02), int(config.screen_height * 1.02))
+            xpos int(-config.screen_width * 0.01 + (config.screen_width / 2 - mouse_pos[0]) * 10.5/960.0 * (config.screen_width/1920.0))
+            ypos int(-config.screen_height * 0.01 + (config.screen_height / 2 - mouse_pos[1]) * 4.725/540.0 * (config.screen_height/1080.0))
+        add "riverside_meadow/layer_2.webp":
+            xysize (int(config.screen_width * 1.02), int(config.screen_height * 1.02))
+            xpos int(-config.screen_width * 0.01 + (config.screen_width / 2 - mouse_pos[0]) * 15/960.0 * (config.screen_width/1920.0))
+            ypos int(-config.screen_height * 0.01 + (config.screen_height / 2 - mouse_pos[1]) * 6.75/540.0 * (config.screen_height/1080.0))
+        add "riverside_meadow/layer_3.webp":
+            xysize (int(config.screen_width * 1.02), int(config.screen_height * 1.02))
+            xpos int(-config.screen_width * 0.01 + (config.screen_width / 2 - mouse_pos[0]) * 20/960.0 * (config.screen_width/1920.0))
+            ypos int(-config.screen_height * 0.01 + (config.screen_height / 2 - mouse_pos[1]) * 9/540.0 * (config.screen_height/1080.0))
+        add "riverside_meadow/layer_4.webp":
+            xysize (int(config.screen_width * 1.02), int(config.screen_height * 1.02))
+            xpos int(-config.screen_width * 0.01 + (config.screen_width / 2 - mouse_pos[0]) * 26/960.0 * (config.screen_width/1920.0))
+            ypos int(-config.screen_height * 0.01 + (config.screen_height / 2 - mouse_pos[1]) * 11.7/540.0 * (config.screen_height/1080.0))
+        add "riverside_meadow/layer_5.webp":
+            xysize (int(config.screen_width * 1.02), int(config.screen_height * 1.02))
+            xpos int(-config.screen_width * 0.01 + (config.screen_width / 2 - mouse_pos[0]) * 33.5/960.0 * (config.screen_width/1920.0))
+            ypos int(-config.screen_height * 0.01 + (config.screen_height / 2 - mouse_pos[1]) * 15.075/540.0 * (config.screen_height/1080.0))
+        add "riverside_meadow/layer_6.webp":
+            xysize (int(config.screen_width * 1.02), int(config.screen_height * 1.02))
+            xpos int(-config.screen_width * 0.01 + (config.screen_width / 2 - mouse_pos[0]) * 42/960.0 * (config.screen_width/1920.0))
+            ypos int(-config.screen_height * 0.01 + (config.screen_height / 2 - mouse_pos[1]) * 18.9/540.0 * (config.screen_height/1080.0))
+        add "riverside_meadow/layer_7.webp":
+            xysize (int(config.screen_width * 1.02), int(config.screen_height * 1.02))
+            xpos int(-config.screen_width * 0.01 + (config.screen_width / 2 - mouse_pos[0]) * 51.5/960.0 * (config.screen_width/1920.0))
+            ypos int(-config.screen_height * 0.01 + (config.screen_height / 2 - mouse_pos[1]) * 23.175/540.0 * (config.screen_height/1080.0))
+        add "riverside_meadow/layer_8.webp":
+            xysize (int(config.screen_width * 1.02), int(config.screen_height * 1.02))
+            xpos int(-config.screen_width * 0.01 + (config.screen_width / 2 - mouse_pos[0]) * 62/960.0 * (config.screen_width/1920.0))
+            ypos int(-config.screen_height * 0.01 + (config.screen_height / 2 - mouse_pos[1]) * 27.9/540.0 * (config.screen_height/1080.0))
 
     # Overlay tipis agar teks menu tetap terbaca.
     add Solid("#09071122")
@@ -430,7 +471,6 @@ screen main_menu():
             text_color "#e9b9ce"
             text_hover_color "#ffffff"
             action OpenURL("https://www.patreon.com/")
-
 
 style main_menu_frame is empty
 style main_menu_vbox is vbox
