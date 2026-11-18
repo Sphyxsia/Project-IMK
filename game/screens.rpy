@@ -292,55 +292,58 @@ transform menu_tilt(angle):
     rotate angle
     anchor (0.0, 0.0)
 
+
 screen navigation():
 
-    style_prefix "navigation"
-    
     if main_menu:
 
         fixed:
             xfill True
             yfill True
 
-            # PLAY
-            textbutton _("PLAY"):
-                xpos 65
-                ypos 265
-                at menu_tilt(-12)
+        # PLAY
+            imagebutton:
+                idle Transform("gui/button/button_start_idle.png", zoom=0.5)
+                hover Transform("gui/button/button_start_hover.png", zoom=0.5)
+                xpos 80
+                ypos 200
                 action Start()
 
             # LOAD
-            textbutton _("LOAD"):
+            imagebutton:
+                idle Transform("gui/button/button_load_idle.png", zoom=0.5)
+                hover Transform("gui/button/button_load_hover.png", zoom=0.5)
                 xpos 155
                 ypos 390
-                at menu_tilt(-12)
                 action ShowMenu("load")
 
             # OPTIONS
-            textbutton _("OPTIONS"):
-                xpos 65
+            imagebutton:
+                idle Transform("gui/button/button_options_idle.png", zoom=0.6)
+                hover Transform("gui/button/button_options_hover.png", zoom=0.6)
+                xpos 120
                 ypos 535
-                at menu_tilt(-12)
                 action ShowMenu("preferences")
 
             # ABOUT
-            textbutton _("ABOUT"):
+            imagebutton:
+                idle Transform("gui/button/button_about_idle.png", zoom=0.5)
+                hover Transform("gui/button/button_about_hover.png", zoom=0.5)
                 xpos 240
                 ypos 650
-                at menu_tilt(-12)
                 action ShowMenu("about")
 
             # QUIT
-            textbutton _("QUIT"):
+            imagebutton:
+                idle Transform("gui/button/button_quit_idle.png", zoom=0.5)
+                hover Transform("gui/button/button_quit_hover.png", zoom=0.5)
                 xpos 340
                 ypos 755
-                at menu_tilt(-12)
                 action Quit(confirm=True)
 
     else:
 
         vbox:
-            style_prefix "navigation"
             xpos 65
             yalign 0.48
             spacing 12
