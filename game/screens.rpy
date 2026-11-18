@@ -496,6 +496,10 @@ style main_menu_text:
 
 style main_menu_title:
     properties gui.text_properties("title")
+    font "images/font/Involve-Regular.ttf"
+    size 40
+    color "#e06d1b"
+    outlines [(3, "#24152B", 0, 0)]
 
 style main_menu_version:
     properties gui.text_properties("version")

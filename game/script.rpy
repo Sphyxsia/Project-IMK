@@ -279,21 +279,21 @@ label bab3:
 init python:
     import random
     LAKE_FISH_IMAGES = [
-    "images/lake/fish_1.webp",
-    "images/lake/fish_2.webp",
-    "images/lake/fish_3.webp",
-    "images/lake/fish_4.webp",
+    "images/minigame/lake/fish_1.webp",
+    "images/minigame/lake/fish_2.webp",
+    "images/minigame/lake/fish_3.webp",
+    "images/minigame/lake/fish_4.webp",
     ]
     LAKE_TRASH_IMAGES = [
-        "images/lake/fish_trash_1.png",
-        "images/lake/fish_trash_2.png",
-        "images/lake/fish_trash_3.png",
+        "images/minigame/lake/fish_trash_1.png",
+        "images/minigame/lake/fish_trash_2.png",
+        "images/minigame/lake/fish_trash_3.png",
     ]
     LAKE_HEALTH_IMAGES = [
-        "images/healthbar/1.png",
-        "images/healthbar/2.png",
-        "images/healthbar/3.png",
-        "images/healthbar/4.png",
+        "images/minigame/healthbar/1.png",
+        "images/minigame/healthbar/2.png",
+        "images/minigame/healthbar/3.png",
+        "images/minigame/healthbar/4.png",
     ]
     LAKE_TRASH_PER_ROUND = [3, 5, 8]
     LAKE_SHUFFLE_SECONDS = [8, 6, 4]
@@ -301,7 +301,11 @@ init python:
     LAKE_TIME_LIMIT = 40
     LAKE_GRID_COLS = 8
     LAKE_GRID_ROWS = 4
-    LAKE_CELL_SIZE = 250
+
+    LAKE_CELL_SIZE = min(
+        config.screen_width // LAKE_GRID_COLS,
+        config.screen_height // (LAKE_GRID_ROWS + 1)
+)
 
     lake_round = 0              # 0, 1, 2
     lake_trash_left = 0         # trash clicks still needed this round
@@ -413,7 +417,8 @@ screen lake_game(win_label, lose_label):
         timer 1.5 action Function(lake_begin_round)
 
     fixed:
-        xsize 2560 ysize 1440
+        xsize config.screen_width
+        ysize config.screen_height
 
         # replace "black" with your lake background image if you have one
         add "black"
@@ -424,7 +429,7 @@ screen lake_game(win_label, lose_label):
 
         elif lake_round < len(LAKE_TRASH_PER_ROUND):
             # ---- fish grid ----
-            grid LAKE_GRID_COLS LAKE_GRID_ROWS spacing 0:
+            grid LAKE_GRID_COLS LAKE_GRID_ROWS spacing -20:
                 xalign 0.5 yalign 0.55
                 for i, cell in enumerate(lake_cells):
                     imagebutton:
@@ -477,8 +482,8 @@ label lake_test:
 
 label lake_win:
     "You cleaned the lake!"
-    jump bab3
+    return
 
 label lake_lose:
     "You lost... try again."
-    jump lake_test
+    return
