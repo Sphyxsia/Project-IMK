@@ -16,6 +16,12 @@ transform loncat_bicara:
 transform ukuran_reza:
     zoom 0.65
     yoffset 1200
+    xoffset -400
+
+transform ukuran_dinda:
+    zoom 0.65
+    yoffset 1200
+    xoffset -400
 # Deklarasikan gambar di bawah line ini, menggunakan pernyataan image.
 # cnth. image eileen happy = "eileen_happy.png"
 image bg room1 = "images/bg/room_night.jpg"
@@ -241,31 +247,31 @@ label bab3:
 
     show reza idle at ukuran_reza, left with moveinleft
     tk1 "Sini sini! Tumben nggak telat."
-    show reza idle at loncat_bicara
+    show reza idle at ukuran_reza, loncat_bicara
     k "Iya lahh, Aku kan anak rajin."
 
-    show dinda idle at right with moveinright
+    show dinda idle at ukuran_dinda, right with moveinright
     tk2 "Rajin dari mana? Kemarin aja kamu bilang malas ikut."
-    show dinda idle at loncat_bicara
+    show dinda idle at ukuran_dinda, loncat_bicara
     k "iyahh yang kemarin udah ditangkep aparat, aku kloningan nya."
 
     tk1 "Hahaha, plot twist banget."
-    show reza idle at loncat_bicara
+    show reza idle at ukuran_reza, loncat_bicara
     tk2 "Udah udah. Itu panitianya udah mulai ngumpulin orang-orang. Ayo ke sana."
-    show dinda idle at loncat_bicara
+    show dinda idle at ukuran_dinda, loncat_bicara
 
     scene bg lake1 with dissolve
     "Para relawan berkumpul. Panitia berdiri di depan membawa kantong-kantong sampah."
 
     pn "Selamat pagi, Teman-teman relawan! Terima kasih sudah datang. Hari ini tugas kita cukup simple: membersihkan Danau Bougainvillea dari sampah."
-    show reza idle at left
-    show dinda idle at right
+    show reza idle at ukuran_reza
+    show dinda idle at ukuran_dinda
     tk1 "(bisik ke Kiki) kok GAMPANG. Liat aja tuh sampahnya segunung."
-    show reza idle at loncat_bicara
+    show reza idle at ukuran_reza, loncat_bicara
     pn "Mungkin kelihatannya cuma kayak kerja bakti biasa. Tapi Danau Bougainvillea ini salah satu sumber mata air utama yang digunakan masyarakat sekitar. Kalau airnya kotor, banyak orang akan terkena dampak nya, kita tidak boleh membiarkan hal itu terjadi."
 
     tk2 "Ternyata sepenting itu..."
-    show dinda idle at loncat_bicara
+    show dinda idle at ukuran_dinda, loncat_bicara
     k "Kalau gitu kita harus kerja yang bener nih."
 
     pn "Betul. Silahkan ambil kantong sampah dan sarung tangan, kita mulai dari sisi danau. Nanti kita  cek lagi nanti. Semangat ya!"
