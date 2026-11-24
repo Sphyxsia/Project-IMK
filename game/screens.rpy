@@ -308,6 +308,8 @@ screen navigation():
                 xpos 80
                 ypos 200
                 action Start()
+                hover_sound "audio/sfx/mm_button_hover.ogg"
+                activate_sound "audio/sfx/mm_button_click.ogg"
 
             # LOAD
             imagebutton:
@@ -316,6 +318,8 @@ screen navigation():
                 xpos 155
                 ypos 390
                 action ShowMenu("load")
+                hover_sound "audio/sfx/mm_button_hover.ogg"
+                activate_sound "audio/sfx/mm_button_click.ogg"
 
             # OPTIONS
             imagebutton:
@@ -324,6 +328,8 @@ screen navigation():
                 xpos 120
                 ypos 535
                 action ShowMenu("preferences")
+                hover_sound "audio/sfx/mm_button_hover.ogg"
+                activate_sound "audio/sfx/mm_button_click.ogg"
 
             # ABOUT
             imagebutton:
@@ -332,6 +338,8 @@ screen navigation():
                 xpos 240
                 ypos 650
                 action ShowMenu("about")
+                hover_sound "audio/sfx/mm_button_hover.ogg"
+                activate_sound "audio/sfx/mm_button_click.ogg"
 
             # QUIT
             imagebutton:
@@ -340,6 +348,8 @@ screen navigation():
                 xpos 340
                 ypos 755
                 action Quit(confirm=True)
+                hover_sound "audio/sfx/mm_button_hover.ogg"
+                activate_sound "audio/sfx/mm_button_click.ogg"
 
     else:
 
@@ -783,17 +793,36 @@ screen file_slots(title):
                     button:
                         action FileAction(slot)
 
-                        has vbox
+                        background Transform("gui/button/saves_bg.png", size=(260, 150))
+                        hover_background Transform("gui/button/saves_fg.png", size=(260, 150))
 
-                        add FileScreenshot(slot) xalign 0.5
+                        xsize 260
+                        ysize 150
 
-                        text FileTime(slot, format=_("{#file_time}%A, %B %d %Y, %H:%M"), empty=_("Slot Kosong")):
-                            style "slot_time_text"
+                        vbox:
+                            spacing 5
+                            xalign 0.5
+                            yalign 0.5
 
-                        text FileSaveName(slot):
-                            style "slot_name_text"
+                            fixed:
+                                xsize 192
+                                ysize 108
 
-                        key "save_delete" action FileDelete(slot)
+                                add FileScreenshot(slot) xsize 192 ysize 108
+                                add "gui/button/save_slot_frame.png" xsize 192 ysize 108
+
+                            vbox:
+                                spacing 5
+                                yalign 0.5
+
+                                text FileTime(slot, format=_("{#file_time}%A, %B %d %Y, %H:%M"), empty=_("Slot Kosong")):
+                                    size 14
+                                    xalign 0.5
+
+                                text FileSaveName(slot):
+                                    size 16
+                        
+                            key "save_delete" action FileDelete(slot)
 
             ## Tombol untuk mengakses halaman lain.
             vbox:
