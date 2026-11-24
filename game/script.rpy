@@ -8,6 +8,14 @@ define config.mouse = {
     ]
 }
 
+transform loncat_bicara:
+    yoffset 0
+    easein 0.08 yoffset -15  # Karakter naik 15 pixel ke atas
+    easeout 0.08 yoffset 0   # Karakter kembali ke posisi semula
+
+transform ukuran_reza:
+    zoom 0.65
+    yoffset 1200
 # Deklarasikan gambar di bawah line ini, menggunakan pernyataan image.
 # cnth. image eileen happy = "eileen_happy.png"
 image bg room1 = "images/bg/room_night.jpg"
@@ -17,6 +25,8 @@ image bg street = "images/bg/street_morning.jpg"
 image bg kereta = "images/bg/train_car.jpg"
 image bg window_kereta = "images/bg/train_window.jpg"
 image bg lake1 = "images/bg/lake_morning.jpg"
+image reza idle = "images/sprites/reza.png" 
+image dinda idle = "images/sprites/dinda.png" 
 # Deklarasikan karakter yang digunakan di game.
 define k = Character('Kiki', color="#ffffff")
 define a = Character('Adek Kiki', color="#ffffff")
@@ -227,30 +237,35 @@ label bab3:
 
     scene bg street with moveinright
     show bg lake1 with pixellate
-    tk1 "Woi, Ki! Sini sini! Tumben nggak telat."
+    tk1 "Woi, Ki!" 
 
+    show reza idle at ukuran_reza, left with moveinleft
+    tk1 "Sini sini! Tumben nggak telat."
+    show reza idle at loncat_bicara
     k "Iya lahh, Aku kan anak rajin."
 
+    show dinda idle at right with moveinright
     tk2 "Rajin dari mana? Kemarin aja kamu bilang malas ikut."
-
+    show dinda idle at loncat_bicara
     k "iyahh yang kemarin udah ditangkep aparat, aku kloningan nya."
 
     tk1 "Hahaha, plot twist banget."
-
+    show reza idle at loncat_bicara
     tk2 "Udah udah. Itu panitianya udah mulai ngumpulin orang-orang. Ayo ke sana."
-
+    show dinda idle at loncat_bicara
 
     scene bg lake1 with dissolve
     "Para relawan berkumpul. Panitia berdiri di depan membawa kantong-kantong sampah."
 
     pn "Selamat pagi, Teman-teman relawan! Terima kasih sudah datang. Hari ini tugas kita cukup simple: membersihkan Danau Bougainvillea dari sampah."
-
+    show reza idle at left
+    show dinda idle at right
     tk1 "(bisik ke Kiki) kok GAMPANG. Liat aja tuh sampahnya segunung."
-
+    show reza idle at loncat_bicara
     pn "Mungkin kelihatannya cuma kayak kerja bakti biasa. Tapi Danau Bougainvillea ini salah satu sumber mata air utama yang digunakan masyarakat sekitar. Kalau airnya kotor, banyak orang akan terkena dampak nya, kita tidak boleh membiarkan hal itu terjadi."
 
     tk2 "Ternyata sepenting itu..."
-
+    show dinda idle at loncat_bicara
     k "Kalau gitu kita harus kerja yang bener nih."
 
     pn "Betul. Silahkan ambil kantong sampah dan sarung tangan, kita mulai dari sisi danau. Nanti kita  cek lagi nanti. Semangat ya!"
