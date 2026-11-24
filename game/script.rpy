@@ -36,21 +36,21 @@ image bg lake2 = "images/bg/lake_dusk.jpg"
 image reza idle = "images/sprites/reza.png" 
 image dinda idle = "images/sprites/dinda.png" 
 # Deklarasikan karakter yang digunakan di game.
-define k = Character('Kiki', color="#ffffff")
-define a = Character('Adek Kiki', color="#ffffff")
-define i = Character('Ibu', color="#ffffff")
-define b = Character('Bapak', color="#ffffff")
-define d = Character('Pak Darto', color="#ffffff")
-define tk1 = Character('Reza', color="#ffffff")
-define tk2 = Character('Dinda', color="#ffffff")
-define pr = Character('Pak Rakha', color="#ffffff")
-define s = Character('Siska', color="#ffffff")
-define nco = Character('???', color="#ffffff")
-define nce = Character('???', color="#ffffff")
-define aco = Character('???', color="#ffffff")
-define ace = Character('???', color="#ffffff")
-define pn = Character('Panitia', color="#ffffff")
-define kr = Character('Kiki & Reza', color="#ffffff")
+define k = Character('Kiki', color="#005F99")          
+define a = Character('Adek Kiki', color="#B36B00")   
+define i = Character('Ibu', color="#9E3B18")         
+define b = Character('Bapak', color="#2B5B6C")     
+define d = Character('Pak Darto', color="#2E6B27")   
+define tk1 = Character('Reza', color="#C44900")       
+define tk2 = Character('Dinda', color="#A81C48")      
+define pr = Character('Pak Rakha', color="#4F2D9E")   
+define s = Character('Siska', color="#9E2A2B")        
+define nco = Character('???', color="#3D444D")        
+define nce = Character('???', color="#3D444D")
+define aco = Character('???', color="#3D444D")
+define ace = Character('???', color="#3D444D")
+define pn = Character('Panitia', color="#0E665E")      
+define kr = Character('Kiki & Reza', color="#4A701C") 
 # Game dimulai disini.
 label start:
 
@@ -175,7 +175,7 @@ label m1_berhasil:
 
     k "Energi matahari merupakan sumber energi terbarukan, tetapi kita tetap perlu menyimpan dan menggunakannya dengan benar."
 
-    jump bab3
+    jump bab2
 
 
 label m1_gagal:
@@ -186,7 +186,7 @@ label m1_gagal:
 
     k "Aku tetap bisa belajar dari kesalahan ini."
 
-    jump bab3
+    jump bab2
 
 
 label bab2:
@@ -217,25 +217,30 @@ label bab2:
 
     jump minigame_pipa
 
-    label minigame_pipa:
+label minigame_pipa:
 
     $ pipe_generate_board()
-
     call screen pipe_puzzle
 
     if _return:
-
-        k "Yes! Semua pipanya sudah tersambung!"
-
-        $ minigame += 1
-
+        jump pipe_win
     else:
+        jump pipe_lose
 
-        k "Sepertinya aku perlu mencoba lagi nanti."
 
-    return
+label pipe_win:
 
-    
+    k "Yes! Semua pipanya sudah tersambung!"
+
+    $ minigame += 1
+
+    jump bab3
+
+
+label pipe_lose:
+
+    k "Sepertinya aku perlu mencoba lagi nanti."
+
     jump bab3
 
 label bab3:
@@ -395,351 +400,306 @@ label ending:
     return
 
 
-default pipe_board = []
-default pipe_message = ""
+default pipe_board = set()
 
 init python:
 
-    import random
+    import pygame_sdl2 as pygame
 
-    PIPE_COLS = 5
-    PIPE_ROWS = 6
+    # ---------------- LEVEL (edit di sini) ----------------
+    # '#' = dinding (tidak bisa diisi)
+    # '.' = koridor
+    # angka = node checkpoint (juga koridor)
+    PIPE_MAP = [
+        "1..2#.5",
+        "#.#.#..",
+        "......#",
+        ".#3#.#.",
+        "....4..",
+    ]
 
-    # cell[1] = True berarti BLACK/permanen.
-    # cell[1] = False berarti BROWN/bisa diputar.
-    PIPE_IMAGES = {
-        ("I", True): "images/minigame/pipe/pipe_i_black.png",
-        ("R", True): "images/minigame/pipe/pipe_r_black.png",
-        ("T", True): "images/minigame/pipe/pipe_t_black.png",
+    # Segmen oranye yang sudah ada di awal (petunjuk), pasangan sel (baris, kolom)
+    PIPE_HINT_EDGES = [
+        ((0, 0), (0, 1)),
+    ]
 
-        ("I", False): "images/minigame/pipe/pipe_i_brown.png",
-        ("R", False): "images/minigame/pipe/pipe_r_brown.png",
-        ("T", False): "images/minigame/pipe/pipe_t_brown.png",
-    }
+    # ---------------- TAMPILAN ----------------
+    PIPE_CELL = 120        # ukuran satu kotak grid (px)
+    PIPE_LANE = 40         # lebar koridor
+    PIPE_INK = 16          # tebal garis oranye
+    PIPE_DEAD = 16         # zona netral di sekitar titik tengah kotak
+    PIPE_HIT = 22          # toleransi kursor ke kiri/kanan koridor
 
-    # Arah: N=0, E=1, S=2, W=3
+    PIPE_PAPER = (230, 216, 181, 255)
+    PIPE_GRID = (207, 192, 154, 255)
+    PIPE_WALL = (110, 96, 66, 255)
+    PIPE_LANE_COLOR = (255, 250, 238, 255)
+    PIPE_ORANGE = (255, 138, 31, 255)
+    PIPE_DARK = (74, 63, 42, 255)
+    PIPE_WHITE = (255, 255, 255, 255)
 
-    PIPE_BASE = {
-        "I": [0, 2],
-        "R": [0, 1],
-        "T": [0, 2, 3],
-    }
+    PIPE_ROWS = len(PIPE_MAP)
+    PIPE_COLS = len(PIPE_MAP[0])
 
-    def pipe_rotate_dirs(dirs, angle):
-        steps = angle // 90
-        return sorted([(d + steps) % 4 for d in dirs])
+    # ---------------- DATA LEVEL ----------------
 
-    def pipe_find_rotation(kind, target):
-        for angle in [0, 90, 180, 270]:
-            if pipe_rotate_dirs(PIPE_BASE[kind], angle) == sorted(target):
-                return angle
-        return 0
+    def pipe_edge(a, b):
+        """Segmen = pasangan dua sel bersebelahan, selalu terurut."""
+        return tuple(sorted((a, b)))
 
-    
+    def pipe_build():
+        cells = set()
+        nodes = {}
+        for r, row in enumerate(PIPE_MAP):
+            for c, ch in enumerate(row):
+                if ch != "#":
+                    cells.add((r, c))
+                    if ch.isdigit():
+                        nodes[int(ch)] = (r, c)
+
+        # Segmen hanya ada antara dua sel koridor yang bersebelahan.
+        # Karena itu garis TIDAK bisa melompat lewat dinding.
+        edges = []
+        for (r, c) in sorted(cells):
+            for dr, dc in ((0, 1), (1, 0)):
+                n = (r + dr, c + dc)
+                if n in cells:
+                    edges.append(pipe_edge((r, c), n))
+        return cells, nodes, edges
+
+    PIPE_CELLS, PIPE_NODES, PIPE_EDGES = pipe_build()
+
+    def pipe_center(cell):
+        return (cell[1] * PIPE_CELL + PIPE_CELL // 2,
+                cell[0] * PIPE_CELL + PIPE_CELL // 2)
+
+    # ---------------- LOGIKA ----------------
+
     def pipe_generate_board():
+        """Mulai level dari awal (tanpa refresh layar)."""
+        store.pipe_board = set(pipe_edge(a, b) for a, b in PIPE_HINT_EDGES)
 
-        # Membuat jalur zigzag yang melewati semua kotak
-        # Membuat jalur zigzag per kolom.
-        # START: kiri atas.
-        # FINISH: kanan bawah.
-
-        path = []
-
-        for c in range(PIPE_COLS):
-
-            if c % 2 == 0:
-                rows = range(PIPE_ROWS)
-            else:
-                rows = range(PIPE_ROWS - 1, -1, -1)
-
-            for r in rows:
-                path.append((r, c))
-
-        start = path[0]
-        finish = path[-1]
-
-        # Membuat jalur antar kotak
-        edges = set()
-
-        def add_edge(a, b):
-            edges.add(tuple(sorted((a, b))))
-
-        for i in range(len(path) - 1):
-            add_edge(path[i], path[i + 1])
-
-        # Tambahkan cabang agar muncul pipa T
-        candidates = []
-
-        for r in range(PIPE_ROWS):
-            for c in range(PIPE_COLS):
-
-                for dr, dc in [(0, 1), (1, 0)]:
-                    nr, nc = r + dr, c + dc
-
-                    if nr >= PIPE_ROWS or nc >= PIPE_COLS:
-                        continue
-
-                    a = (r, c)
-                    b = (nr, nc)
-                    edge = tuple(sorted((a, b)))
-
-                    if edge not in edges:
-                        candidates.append(edge)
-
-        random.shuffle(candidates)
-
-        added = 0
-
-        for a, b in candidates:
-
-            if added >= 4:
-                break
-
-            degree_a = sum(a in e for e in edges)
-            degree_b = sum(b in e for e in edges)
-
-            if a in (start, finish) or b in (start, finish):
-                continue
-
-            if degree_a == 2 and degree_b == 2:
-                edges.add((a, b))
-                added += 1
-
-        # Menentukan koneksi tiap pipa
-        connections = {
-            (r, c): set()
-            for r in range(PIPE_ROWS)
-            for c in range(PIPE_COLS)
-        }
-
-        for a, b in edges:
-
-            dr = b[0] - a[0]
-            dc = b[1] - a[1]
-
-            if dr == -1:
-                d = 0
-            elif dc == 1:
-                d = 1
-            elif dr == 1:
-                d = 2
-            else:
-                d = 3
-
-            connections[a].add(d)
-            connections[b].add((d + 2) % 4)
-
-        # START menerima koneksi dari luar sebelah kiri.
-        connections[start].add(3)
-
-        # FINISH mengeluarkan koneksi ke luar sebelah kanan.
-        connections[finish].add(1)
-
-        board = []
-
-        for r in range(PIPE_ROWS):
-            for c in range(PIPE_COLS):
-
-                dirs = sorted(connections[(r, c)])
-
-                if len(dirs) == 3:
-                    kind = "T"
-                elif len(dirs) == 2:
-                    if (dirs[1] - dirs[0]) % 4 == 2:
-                        kind = "I"
-                    else:
-                        kind = "R"
-                else:
-                    raise Exception(
-                        "Pipa memiliki konektor tidak valid: {}".format(dirs)
-                    )
-
-                target = pipe_find_rotation(kind, dirs)
-
-                # START dan FINISH selalu permanen karena memakai gambar khusus.
-                # Kotak lainnya: Black permanen, Brown bisa diputar.
-                is_endpoint = (r, c) == start or (r, c) == finish
-                fixed = is_endpoint or (random.random() < 0.25)
-
-                if fixed:
-                    rotation = target
-                else:
-                    choices = [
-                        angle for angle in [0, 90, 180, 270]
-                        if angle != target
-                    ]
-                    rotation = random.choice(choices)
-
-                board.append([
-                    kind,
-                    fixed,
-                    rotation,
-                    target
-                ])
-
-        store.pipe_board = board
-        store.pipe_message = ""
-
-
-
-    def pipe_rotate(index):
-
-        cell = store.pipe_board[index]
-
-        # Black dan endpoint tidak bisa diputar.
-        if cell[1]:
-            return
-
-        # Putar pipa 90 derajat.
-        cell[2] = (cell[2] + 90) % 360
-
-        # Refresh screen agar kondisi menang diperiksa ulang.
+    def pipe_reset():
+        """Dipakai tombol RESET."""
+        pipe_generate_board()
         renpy.restart_interaction()
 
+    def pipe_reach(start):
+        """Semua sel yang bisa dicapai dari 'start' lewat segmen oranye."""
+        adj = {}
+        for a, b in store.pipe_board:
+            adj.setdefault(a, set()).add(b)
+            adj.setdefault(b, set()).add(a)
+
+        seen = set([start])
+        stack = [start]
+        while stack:
+            cur = stack.pop()
+            for nxt in adj.get(cur, ()):
+                if nxt not in seen:
+                    seen.add(nxt)
+                    stack.append(nxt)
+        return seen
+
+    def pipe_status():
+        """{nomor: True/False}. True (centang) bila node tersambung ke node lain."""
+        status = {}
+        for num, cell in PIPE_NODES.items():
+            reach = pipe_reach(cell)
+            status[num] = any(
+                other != cell and other in reach
+                for other in PIPE_NODES.values()
+            )
+        return status
 
     def pipe_is_solved():
+        """Menang bila semua node ada dalam satu rangkaian."""
+        first = PIPE_NODES[min(PIPE_NODES)]
+        reach = pipe_reach(first)
+        return all(cell in reach for cell in PIPE_NODES.values())
 
-        board = store.pipe_board
+    def pipe_edge_at(x, y):
+        """Segmen koridor di bawah kursor (atau None)."""
+        for e in PIPE_EDGES:
+            x1, y1 = pipe_center(e[0])
+            x2, y2 = pipe_center(e[1])
+            if y1 == y2:        # horizontal
+                lo = min(x1, x2) + PIPE_DEAD
+                hi = max(x1, x2) - PIPE_DEAD
+                if lo <= x <= hi and abs(y - y1) <= PIPE_HIT:
+                    return e
+            else:               # vertikal
+                lo = min(y1, y2) + PIPE_DEAD
+                hi = max(y1, y2) - PIPE_DEAD
+                if lo <= y <= hi and abs(x - x1) <= PIPE_HIT:
+                    return e
+        return None
 
-        if len(board) != PIPE_COLS * PIPE_ROWS:
-            return False
+    # ---------------- PAPAN (gambar + input mouse) ----------------
 
-        # cell[2] adalah rotasi saat ini.
-        # cell[3] adalah rotasi solusi yang disimpan generator.
-        for cell in board:
+    class PipeBoard(renpy.Displayable):
 
-            current_dirs = pipe_rotate_dirs(
-                PIPE_BASE[cell[0]], cell[2]
-            )
+        def __init__(self, **kwargs):
+            super(PipeBoard, self).__init__(**kwargs)
+            self.dragging = False
+            self.mode = "fill"          # "fill" atau "erase"
+            self.visited = set()
+            self.last_edge = None
+            self.last_pos = (0, 0)
 
-            target_dirs = pipe_rotate_dirs(
-                PIPE_BASE[cell[0]], cell[3]
-            )
+        # ---- gambar ----
+        def render(self, width, height, st, at):
+            w = PIPE_COLS * PIPE_CELL
+            h = PIPE_ROWS * PIPE_CELL
+            rv = renpy.Render(w, h)
+            cv = rv.canvas()
 
-            if current_dirs != target_dirs:
-                return False
+            # kertas + grid
+            cv.rect(PIPE_PAPER, (0, 0, w, h))
+            for i in range(PIPE_COLS + 1):
+                cv.line(PIPE_GRID, (i * PIPE_CELL, 0), (i * PIPE_CELL, h), 1)
+            for i in range(PIPE_ROWS + 1):
+                cv.line(PIPE_GRID, (0, i * PIPE_CELL), (w, i * PIPE_CELL), 1)
 
-        return True
+            # koridor: garis tepi dulu, lalu isi
+            for width_, color in ((PIPE_LANE + 6, PIPE_WALL),
+                                  (PIPE_LANE, PIPE_LANE_COLOR)):
+                half = width_ // 2
+                for cell in PIPE_CELLS:
+                    x, y = pipe_center(cell)
+                    cv.rect(color, (x - half, y - half, width_, width_))
+                for e in PIPE_EDGES:
+                    cv.line(color, pipe_center(e[0]), pipe_center(e[1]), width_)
+
+            # tinta oranye
+            for e in store.pipe_board:
+                p1 = pipe_center(e[0])
+                p2 = pipe_center(e[1])
+                cv.line(PIPE_ORANGE, p1, p2, PIPE_INK)
+                cv.circle(PIPE_ORANGE, p1, PIPE_INK // 2)
+                cv.circle(PIPE_ORANGE, p2, PIPE_INK // 2)
+
+            # node checkpoint
+            status = pipe_status()
+            for num, cell in PIPE_NODES.items():
+                x, y = pipe_center(cell)
+                ok = status[num]
+                ring = PIPE_ORANGE if ok else PIPE_DARK
+
+                cv.circle(PIPE_WHITE, (x, y), 24)
+                cv.circle(ring, (x, y), 24, 4)
+
+                if ok:
+                    # centang
+                    cv.lines(PIPE_ORANGE, False,
+                             [(x - 10, y), (x - 3, y + 9), (x + 11, y - 9)], 5)
+                else:
+                    # silang
+                    cv.line(PIPE_DARK, (x - 9, y - 9), (x + 9, y + 9), 4)
+                    cv.line(PIPE_DARK, (x - 9, y + 9), (x + 9, y - 9), 4)
+
+                # nomor di pojok kiri atas node
+                txt = renpy.render(
+                    Text(str(num), size=26, color="#4a3f2a", bold=True),
+                    w, h, st, at)
+                tw, th = txt.get_size()
+                rv.blit(txt, (x - 32 - tw / 2.0, y - 32 - th / 2.0))
+
+            return rv
+
+        # ---- input ----
+        def apply(self, e):
+            if self.mode == "fill":
+                store.pipe_board.add(e)
+            else:
+                store.pipe_board.discard(e)
+            self.visited.add(e)
+            self.last_edge = e
+            renpy.redraw(self, 0)
+
+        def drag_to(self, x, y):
+            px, py = self.last_pos
+            dist = max(abs(x - px), abs(y - py))
+            steps = max(1, int(dist // 6))     # titik antara, supaya tidak ada segmen terlewat
+
+            for s in range(1, steps + 1):
+                sx = px + (x - px) * s / float(steps)
+                sy = py + (y - py) * s / float(steps)
+                e = pipe_edge_at(sx, sy)
+
+                if e is None or e in self.visited:
+                    continue
+
+                # harus menyambung dari segmen sebelumnya (tidak boleh melompat)
+                if self.last_edge is not None and not (set(e) & set(self.last_edge)):
+                    continue
+
+                self.apply(e)
+
+            self.last_pos = (x, y)
+
+        def event(self, ev, x, y, st):
+
+            if ev.type == pygame.MOUSEBUTTONDOWN and ev.button == 1:
+                e = pipe_edge_at(x, y)
+                if e is not None:
+                    self.dragging = True
+                    self.visited = set()
+                    self.last_edge = None
+                    self.last_pos = (x, y)
+                    # klik di koridor kosong = isi, di koridor oranye = hapus
+                    self.mode = "erase" if e in store.pipe_board else "fill"
+                    self.apply(e)
+
+            elif ev.type == pygame.MOUSEMOTION and self.dragging:
+                if ev.buttons[0]:
+                    self.drag_to(x, y)
+                else:
+                    self.dragging = False
+                    renpy.restart_interaction()
+
+            elif ev.type == pygame.MOUSEBUTTONUP and ev.button == 1 and self.dragging:
+                self.dragging = False
+                renpy.restart_interaction()     # cek menang di screen
+
+            return None
 
 
+# ============================================================
+#  SCREEN
+# ============================================================
 
 screen pipe_puzzle():
 
     modal True
 
-    add "#172426"
+    add "#2b2417"
 
-    text "START":
-        color "#39ff55"
-        size 25
+    text "PLAN OF ESCAPE ROUTE":
         xalign 0.5
-        ypos 100
-
-    text "FINISH":
-        color "#39ff55"
-        size 25
-        xalign 0.5
-        ypos 800
-
-    text "PIPE CONNECTION":
-        xalign 0.5
-        ypos 12
-        size 32
+        ypos 14
+        size 34
         color "#ffffff"
 
-    text "Putar pipa Brown sampai semua jalur tersambung":
+    text "Seret di lorong untuk menggambar jalur. Klik jalur oranye untuk menghapusnya.":
         xalign 0.5
-        ypos 55
-        size 16
+        ypos 62
+        size 18
         color "#dddddd"
 
-    
     fixed:
+        xalign 0.5
+        yalign 0.5
+        xysize (PIPE_COLS * PIPE_CELL, PIPE_ROWS * PIPE_CELL)
+        add PipeBoard()
 
-        $ cell_size = 68
-        $ board_width = PIPE_COLS * cell_size
-        $ board_height = PIPE_ROWS * cell_size
-
-        $ board_x = (config.screen_width - board_width) // 2
-        $ board_y = (config.screen_height - board_height) // 2 + 30
-
-        # Label START
-        text "START":
-            color "#39ff55"
-            size 22
-            xpos board_x - 85
-            ypos board_y + 18
-
-        # Label FINISH
-        text "FINISH":
-            color "#39ff55"
-            size 22
-            xpos board_x - 85
-            ypos board_y + (PIPE_ROWS - 1) * cell_size + 18
-
-        
-        for i, cell in enumerate(pipe_board):
-
-            $ row = i // PIPE_COLS
-            $ col = i % PIPE_COLS
-
-            $ px = board_x + col * cell_size
-            $ py = board_y + row * cell_size
-
-            $ image_path = PIPE_IMAGES[(cell[0], cell[1])]
-
-            # START
-            if i == 0:
-
-                add Transform(
-                    "images/minigame/pipe/pipe_start.png",
-                    zoom=2
-                ):
-                    xpos px
-                    ypos py
-
-            # FINISH
-            elif i == len(pipe_board) - 1:
-
-                add Transform(
-                    "images/minigame/pipe/pipe_done.png",
-                    zoom=2
-                ):
-                    xpos px
-                    ypos py
-
-            # BLACK: tidak bisa diputar
-            elif cell[1]:
-
-                add Transform(
-                    image_path,
-                    zoom=2,
-                    rotate=cell[2]
-                ):
-                    xpos px
-                    ypos py
-
-            # BROWN: bisa diputar
-            else:
-
-                imagebutton:
-                    idle Transform(
-                        image_path,
-                        zoom=2,
-                        rotate=cell[2]
-                    )
-
-                    hover Transform(
-                        image_path,
-                        zoom=2,
-                        rotate=cell[2]
-                    )
-
-                    xpos px
-                    ypos py
-
-                    action Function(pipe_rotate, i)
-
+    textbutton "RESET":
+        xalign 0.97
+        ypos 20
+        text_size 28
+        text_color "#ff8a1f"
+        text_hover_color "#ffffff"
+        action Function(pipe_reset)
 
     if pipe_is_solved():
 
@@ -750,7 +710,7 @@ screen pipe_puzzle():
             vbox:
                 spacing 8
 
-                text "SEMUA PIPA TERSAMBUNG!" color "#40e68b"
+                text "Completed!" color "#ff8a1f" size 34 xalign 0.5
 
                 textbutton "LANJUT":
                     xalign 0.5
@@ -762,7 +722,6 @@ screen pipe_puzzle():
             xalign 0.95
             yalign 0.95
             action Return(False)
-
 
 init python:
     import random
