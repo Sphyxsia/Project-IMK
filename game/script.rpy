@@ -21,7 +21,8 @@ transform ukuran_reza:
 transform ukuran_dinda:
     zoom 0.65
     yoffset 1200
-    xoffset -400
+    xoffset 400
+    
 # Deklarasikan gambar di bawah line ini, menggunakan pernyataan image.
 # cnth. image eileen happy = "eileen_happy.png"
 image bg room1 = "images/bg/room_night.jpg"
@@ -31,6 +32,7 @@ image bg street = "images/bg/street_morning.jpg"
 image bg kereta = "images/bg/train_car.jpg"
 image bg window_kereta = "images/bg/train_window.jpg"
 image bg lake1 = "images/bg/lake_morning.jpg"
+image bg lake2 = "images/bg/lake_dusk.jpg"
 image reza idle = "images/sprites/reza.png" 
 image dinda idle = "images/sprites/dinda.png" 
 # Deklarasikan karakter yang digunakan di game.
@@ -246,32 +248,35 @@ label bab3:
     tk1 "Woi, Ki!" 
 
     show reza idle at ukuran_reza, left with moveinleft
-    tk1 "Sini sini! Tumben nggak telat."
     show reza idle at ukuran_reza, loncat_bicara
+    tk1 "Sini sini! Tumben nggak telat."
+    
     k "Iya lahh, Aku kan anak rajin."
 
     show dinda idle at ukuran_dinda, right with moveinright
+    show dinda idle at ukuran_dinda, loncat_bicara
     tk2 "Rajin dari mana? Kemarin aja kamu bilang malas ikut."
-    show dinda idle at ukuran_dinda, loncat_bicara
+    
     k "iyahh yang kemarin udah ditangkep aparat, aku kloningan nya."
-
-    tk1 "Hahaha, plot twist banget."
     show reza idle at ukuran_reza, loncat_bicara
-    tk2 "Udah udah. Itu panitianya udah mulai ngumpulin orang-orang. Ayo ke sana."
+    tk1 "Hahaha, plot twist banget."
     show dinda idle at ukuran_dinda, loncat_bicara
+    tk2 "Udah udah. Itu panitianya udah mulai ngumpulin orang-orang. Ayo ke sana."
+    
 
     scene bg lake1 with dissolve
     "Para relawan berkumpul. Panitia berdiri di depan membawa kantong-kantong sampah."
 
     pn "Selamat pagi, Teman-teman relawan! Terima kasih sudah datang. Hari ini tugas kita cukup simple: membersihkan Danau Bougainvillea dari sampah."
-    show reza idle at ukuran_reza
-    show dinda idle at ukuran_dinda
-    tk1 "(bisik ke Kiki) kok GAMPANG. Liat aja tuh sampahnya segunung."
+    show reza idle at ukuran_reza, left with moveinleft
+    show dinda idle at ukuran_dinda, right with moveinright
     show reza idle at ukuran_reza, loncat_bicara
+    tk1 "(bisik ke Kiki) kok GAMPANG. Liat aja tuh sampahnya segunung."
+    
     pn "Mungkin kelihatannya cuma kayak kerja bakti biasa. Tapi Danau Bougainvillea ini salah satu sumber mata air utama yang digunakan masyarakat sekitar. Kalau airnya kotor, banyak orang akan terkena dampak nya, kita tidak boleh membiarkan hal itu terjadi."
-
-    tk2 "Ternyata sepenting itu..."
     show dinda idle at ukuran_dinda, loncat_bicara
+    tk2 "Ternyata sepenting itu..."
+    
     k "Kalau gitu kita harus kerja yang bener nih."
 
     pn "Betul. Silahkan ambil kantong sampah dan sarung tangan, kita mulai dari sisi danau. Nanti kita  cek lagi nanti. Semangat ya!"
@@ -279,32 +284,34 @@ label bab3:
     "Kiki, Reza, dan Dinda mulai memungut sampah botol, plastik, dan ranting di tepi danau."
 
     scene bg lake1 with dissolve
+    show reza idle at ukuran_reza, loncat_bicara, left with moveinleft
     tk1 "Ki, taruhan yuk. Siapa yang paling banyak ngambil sampah, dia menang."
 
     k "Hah? Taruhan apaan?"
-
+    show reza idle at ukuran_reza, loncat_bicara
     tk1 "Yang kalah traktir makan siang gratis. Gimana?"
 
     k "Oke. mulai siapin duitnya aja, Za."
-
+    show reza idle at ukuran_reza, loncat_bicara
     tk1 "liat aja nanti duit siapa yang akan habis."
-
+    show reza idle at ukuran_reza, loncat_bicara
     tk1 "Rasakan jurus Kantong Sampah Lubang Hitam Raksasa!"
 
     k "Tcih! Gitu doang? Nih, rasakan jurus serangan rudal botol plastik, nyahuu!"
-
+    show reza idle at ukuran_reza, loncat_bicara
     tk1 "Curang! Itu botol sampah punyaku!"
 
 
     scene bg lake1 with dissolve
     tk2 "(menghela napas) Kalian berdua..."
-
+    show dinda idle at ukuran_dinda, left with moveinleft
     "Dinda menghampiri dengan tangan di pinggang."
-
+    show dinda idle at ukuran_dinda, loncat_bicara
     tk2 "KIKI! REZA! Kerja yang bener dong! Dari tadi bercanda terus, sampahnya masih banyak tuh!"
+    show reza idle at ukuran_reza, loncat_bicara
 
     kr "Ehh iya, maaf, Din..."
-
+    show dinda idle at ukuran_dinda, loncat_bicara
     tk2 "Kita di sini mau bersihin danau, bukan lomba adu kumpulan sampah. Ayo lanjut kerja."
 
     "Mereka bertiga kembali bekerja dengan serius."
@@ -316,26 +323,27 @@ label bab3:
 label lake_win:
 
     scene bg lake1 with dissolve
+    show reza idle at ukuran_reza, loncat_bicara, left with moveinleft
     tk1 "(terkapar di rumput) huft…. Capek... Oke, oke, aku ngaku kalah, Ki."
 
     k "Hehe, makanya jangan belagu pake nantangin lagii."
-
+    show dinda idle at ukuran_dinda, loncat_bicara, right with moveinright
     tk2 "hadeh kalian ini, baru serius kalau udah denger makan siang."
 
     k "Tapi liat deh. Danaunya jadi bersih banget."
-
+    show dinda idle at ukuran_dinda, loncat_bicara
     tk2 "Iya. Rasanya puas banget ya."
 
     "Para panitia datang memeriksa, lalu mengangguk puas."
 
     pn "Luar biasa! Terima kasih banyak, ya. Danau ini jadi bersih kembali berkat kalian."
-
+    show reza idle at ukuran_reza, loncat_bicara
     tk1 "Nah, soal taruhan tadi… boleh minggu depan aja ga ki belum dapet setoran hehe"
 
     k "eits gabisa! Traktir sekarang Mie ayam pak rusdi ya!"
-
+    show dinda idle at ukuran_dinda, loncat_bicara
     tk2 "Aku ikut dong!"
-
+    show reza idle at ukuran_reza, loncat_bicara
     tk1 "dih kok jadinya traktir berdua ;-;, dompetku udah mulai nangis nih."
 
     "Danau kembali bersih dan mereka makan mie ayam bareng bertiga."
@@ -344,6 +352,8 @@ label lake_win:
 
 label lake_lose:
 
+    scene bg lake2 with dissolve
+    show reza idle at ukuran_reza, loncat_bicara, left with moveinleft
     tk1 "YES! Aku menang, Ki! Jangan lupa yaaaa!"
 
     k "Iya iya… duh Padahal dikit lagi."
@@ -355,9 +365,9 @@ label lake_lose:
     "Suasana berubah hening. Kiki, Reza, dan Dinda saling pandang."
 
     k "Kami minta maaf, Kak. Usaha kami belum cukup."
-
+    show dinda idle at ukuran_dinda, loncat_bicara, right with moveinright
     tk2 "Maaf, kami terlalu banyak bercanda tadi."
-
+    show reza idle at ukuran_reza, loncat_bicara
     tk1 "(menunduk) Maaf, Kak. Ini salah kami juga."
 
     "Panitia tersenyum dan menepuk pundak mereka."
@@ -367,13 +377,13 @@ label lake_lose:
     k "...Baik, Kak. Terima kasih juga."
 
     "Ketiganya berjalan meninggalkan danau dengan langkah lesu."
-
+    show reza idle at ukuran_reza, loncat_bicara
     tk1 "(pelan) Jadi... mie ayamnya gimana?"
-
+    show dinda idle at ukuran_dinda, loncat_bicara
     tk2 "duh lagi nggak enak, Za. Lain kali aja deh."
 
     k "iya nanti aja, udah hilang mood ku (sama duit ku wkwkwk)"
-
+    show reza idle at ukuran_reza, loncat_bicara
     tk1 "Iya... aku juga. Mending pulang dulu."
 
     "Mereka tidak jadi makan mie ayam bareng. Masing-masing pulang ke rumah/kos."
