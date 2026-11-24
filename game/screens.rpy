@@ -309,7 +309,7 @@ screen navigation():
                 ypos 200
                 action Start()
                 hover_sound "audio/sfx/mm_button_hover.ogg"
-                activate_sound "audio/sfx/mm_button_click.ogg"
+                activate_sound "audio/sfx/mm_button_press.ogg"
 
             # LOAD
             imagebutton:
@@ -319,7 +319,7 @@ screen navigation():
                 ypos 390
                 action ShowMenu("load")
                 hover_sound "audio/sfx/mm_button_hover.ogg"
-                activate_sound "audio/sfx/mm_button_click.ogg"
+                activate_sound "audio/sfx/mm_button_press.ogg"
 
             # OPTIONS
             imagebutton:
@@ -329,7 +329,7 @@ screen navigation():
                 ypos 535
                 action ShowMenu("preferences")
                 hover_sound "audio/sfx/mm_button_hover.ogg"
-                activate_sound "audio/sfx/mm_button_click.ogg"
+                activate_sound "audio/sfx/mm_button_press.ogg"
 
             # ABOUT
             imagebutton:
@@ -339,7 +339,7 @@ screen navigation():
                 ypos 650
                 action ShowMenu("about")
                 hover_sound "audio/sfx/mm_button_hover.ogg"
-                activate_sound "audio/sfx/mm_button_click.ogg"
+                activate_sound "audio/sfx/mm_button_press.ogg"
 
             # QUIT
             imagebutton:
@@ -349,7 +349,7 @@ screen navigation():
                 ypos 755
                 action Quit(confirm=True)
                 hover_sound "audio/sfx/mm_button_hover.ogg"
-                activate_sound "audio/sfx/mm_button_click.ogg"
+                activate_sound "audio/sfx/mm_button_press.ogg"
 
     else:
 
